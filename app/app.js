@@ -8,7 +8,9 @@
   const REFILL_MS = 30 * 60 * 1000;
   const DAILY_GOAL = 30;
   const REPO = 'https://github.com/leewonyoungethan/language';
-  const PUNCT = /[.,!?;:¿¡。，！？、]/g;
+  const PUNCT = /[.,!?;:¿¡。，！？、؟،।]/g;
+  const FLAG_CODES = window.FLAG_CODES || {};
+  const FLAG_URL = 'https://cdn.jsdelivr.net/npm/flag-icons@7.2.3/flags/1x1/';
 
   // ---------- helpers ----------
   const $ = (sel, root) => (root || document).querySelector(sel);
@@ -136,36 +138,95 @@
   // ---------- courses ----------
   const COURSES = (window.COURSES || []).slice();
   buildBasicCourses();
+  COURSES.forEach((c) => { if (!c.basic) appendUnits(c, plusUnits(c.id)); });
   COURSES.forEach(prepare);
 
-  // 기초 코스: 공통 단어 25개(BASIC_CORE)에 언어별 번역(BASIC_LANGS)과 한글 발음(BASIC_PRON)을 붙여요.
+  function splitList(s) { return s.split(';').map((x) => x.trim()); }
+  // '표현|로마자|한글 발음' → [표현, 뜻, 로마자, 한글 발음]
+  function entryItem(entry, key) {
+    const [t, p, h] = entry.split('|').map((x) => (x || '').trim());
+    return t ? [t, key, p || '', h || ''] : null;
+  }
+
+  // 기초 코스: 공통 단어 25개(BASIC_CORE) + 25개 더(BASIC_MORE)에, 인기 언어는 문장 코스(PLUS_CORE)까지 붙여요.
   function buildBasicCourses() {
-    const core = window.BASIC_CORE, pron = window.BASIC_PRON || {};
+    const core = window.BASIC_CORE, more = window.BASIC_MORE, pron = window.BASIC_PRON || {};
     if (!core) return;
     (window.BASIC_LANGS || []).forEach((b) => {
       if (COURSES.some((c) => c.id === b.id)) return;
-      const words = b.w.split(';').map((s) => s.trim());
-      const hs = pron[b.id] ? pron[b.id].ko.split(';').map((s) => s.trim()) : [];
+      const words = splitList(b.w);
+      const hs = pron[b.id] ? splitList(pron[b.id].ko) : [];
       if (words.length !== core.keys.length) console.warn('basic course word count', b.id, words.length);
       if (hs.length && hs.length !== core.keys.length) console.warn('basic pron count', b.id, hs.length);
       const latin = words.every((w) => !w.includes('|'));
-      const chars = latin
-        ? uniqueBy((words.join('').toLowerCase().match(/[^\x00-\x7f]/g) || []).filter((c) => /\p{L}/u.test(c)), (c) => c).slice(0, 10)
-        : [];
-      COURSES.push({
-        id: b.id, name: b.name, lang: b.lang, tts: b.tts, rtl: !!b.rtl, joiner: ' ', basic: true,
-        typing: latin, chars: chars.length ? chars : null,
-        guide: `${REPO}/blob/main/${b.id}.md`, tips: pron[b.id] ? pron[b.id].tips : [],
-        units: core.units.map((u) => Object.assign({}, u, {
+      const course = {
+        id: b.id, name: b.name, lang: b.lang, tts: b.tts, rtl: !!b.rtl, joiner: b.joiner === undefined ? ' ' : b.joiner,
+        basic: true, typing: latin, chars: null,
+        guide: `${REPO}/blob/main/${b.id}.md`, tips: pron[b.id] ? pron[b.id].tips : [], units: [],
+      };
+      appendUnits(course, core.units.map((u) => Object.assign({}, u, {
+        lessons: u.lessons.map((l) => ({
+          title: l.title,
+          items: l.idx.filter((i) => words[i]).map((i) => {
+            const [t, p] = words[i].split('|');
+            return [t.trim(), core.keys[i], (p || '').trim(), hs[i] || ''];
+          }),
+        })),
+      })));
+      if (more && more.words[b.id]) {
+        const list = splitList(more.words[b.id]);
+        if (list.length !== more.keys.length) console.warn('basic-more count', b.id, list.length);
+        appendUnits(course, more.units.map((u) => Object.assign({}, u, {
           lessons: u.lessons.map((l) => ({
             title: l.title,
-            items: l.idx.filter((i) => words[i]).map((i) => {
-              const [t, p] = words[i].split('|');
-              return [t.trim(), core.keys[i], (p || '').trim(), hs[i] || ''];
-            }),
+            items: l.idx.map((i) => list[i] && entryItem(list[i], more.keys[i])).filter(Boolean),
           })),
-        })),
-      });
+        })));
+      }
+      appendUnits(course, plusUnits(b.id));
+      if (latin) {
+        const letters = course.units.flatMap((u) => u.lessons.flatMap((l) => l.items.map((x) => x[0]))).join('').toLowerCase();
+        const chars = uniqueBy((letters.match(/[^\x00-\x7f]/g) || []).filter((c) => /\p{L}/u.test(c)), (c) => c).slice(0, 10);
+        course.chars = chars.length ? chars : null;
+      }
+      COURSES.push(course);
+    });
+  }
+
+  // 문장 코스 유닛 (해당 언어 번역이 있을 때만)
+  function plusUnits(id) {
+    const plus = window.PLUS_CORE;
+    if (!plus || !plus.words[id]) return [];
+    const list = splitList(plus.words[id]);
+    if (list.length !== plus.keys.length) console.warn('plus count', id, list.length);
+    return plus.units.map((u, ui) => Object.assign({}, u, {
+      lessons: [0, 1].map((half) => ({
+        title: plus.lessonTitles[ui][half],
+        items: [0, 1, 2, 3, 4, 5].map((j) => {
+          const i = ui * 12 + half * 6 + j;
+          return list[i] && entryItem(list[i], plus.keys[i]);
+        }).filter(Boolean),
+      })),
+    }));
+  }
+
+  // 이미 코스에 있는 뜻·표현은 빼고, 3개 미만이 된 레슨은 버린 뒤 유닛을 붙여요.
+  function appendUnits(course, units) {
+    const norm = (s) => s.toLowerCase().replace(PUNCT, '').replace(/\s+/g, '');
+    const seenK = new Set(), seenT = new Set();
+    course.units.forEach((u) => u.lessons.forEach((l) => l.items.forEach((a) => { seenK.add(norm(a[1])); seenT.add(norm(a[0])); })));
+    units.forEach((u) => {
+      const lessons = u.lessons.map((l) => ({
+        title: l.title,
+        items: l.items.filter((a) => {
+          const k = norm(a[1]), t = norm(a[0]);
+          if (seenK.has(k) || seenT.has(t)) return false;
+          seenK.add(k);
+          seenT.add(t);
+          return true;
+        }),
+      })).filter((l) => l.items.length >= 3);
+      if (lessons.length) course.units.push(Object.assign({}, u, { lessons }));
     });
   }
 
@@ -328,6 +389,8 @@
 
   function badge(course, cls) {
     if (course.flagSvg) return `<span class="badge flag ${cls || ''}">${course.flagSvg}</span>`;
+    const cc = FLAG_CODES[course.id];
+    if (cc) return `<span class="badge flag ${cls || ''}"><img src="${FLAG_URL}${cc}.svg" alt="" loading="lazy"></span>`;
     return `<span class="badge ${cls || ''}" style="--h:${course.hue}">${esc(course.name[0])}</span>`;
   }
 
@@ -470,7 +533,7 @@
           </div>
         </section>
         ${units}
-        <p class="foot-note">${course.basic ? '기초 코스예요. 그림 단어 25개로 시작해요.' : '정규 코스예요.'} · <a href="${course.guide}" target="_blank" rel="noopener">${esc(course.name)} 공부 자료 보기</a></p>
+        <p class="foot-note">${course.flat.length}개 레슨 · 단어와 표현 ${course.items.length}개 · <a href="${course.guide}" target="_blank" rel="noopener">${esc(course.name)} 공부 자료 보기</a></p>
       </main>`);
 
     bindTopBar();
@@ -519,25 +582,32 @@
   // ---------- course select ----------
   function showCourses() {
     const active = getCourse(S.course);
-    const ordered = COURSES.filter((c) => !c.basic).concat(
-      COURSES.filter((c) => c.basic).sort((a, b) => a.name.localeCompare(b.name, 'ko')));
+    const POPULAR = ['english', 'japanese', 'chinese', 'spanish', 'french', 'german', 'russian', 'italian', 'portuguese', 'arabic',
+      'vietnamese', 'thai', 'indonesian', 'turkish', 'hindi', 'cantonese', 'dutch', 'swedish', 'polish'];
+    const popular = POPULAR.map(getCourse).filter(Boolean);
+    const basics = COURSES.filter((c) => !popular.includes(c)).sort((a, b) => a.name.localeCompare(b.name, 'ko'));
     const courseIds = new Set(COURSES.map((c) => c.id));
+    const card = (c) => {
+      const done = doneCount(c);
+      return `<button class="course-card ${active === c ? 'active' : ''}" data-id="${c.id}" data-q="${esc((c.name + ' ' + c.id).toLowerCase())}">
+          ${badge(c, 'lg')}
+          <span class="cname">${esc(c.name)}</span>
+          <span class="ctag ${popular.includes(c) ? 'full' : ''}">${c.flat.length}레슨</span>
+          <span class="mini-bar"><span style="width:${Math.round((100 * done) / c.flat.length)}%"></span></span>
+        </button>`;
+    };
     const others = ALL_LANGUAGES.filter((l) => !courseIds.has(l.id));
     const statusLabel = { '위기': '소멸 위기', '사어': '사어', '고전': '고전어', '인공': '인공어', group: '언어군', '미상': '정보 없음' };
     render(`<main class="page courses">
       <div class="page-head">${active ? `<button class="icon-btn back" aria-label="닫기">${icon('back')}</button>` : ''}<h1>언어 고르기</h1></div>
       ${speech('happy', '<b>어떤 언어로 여행을 떠날까요?</b><br>레슨이 있는 언어는 바로 배울 수 있고, 나머지 언어는 공부 자료를 볼 수 있어요.', 84)}
       <label class="search">${icon('search')}<input type="search" placeholder="언어 검색 (예: 스페인어, Spanish)" autocomplete="off"></label>
-      <h2 class="sec-title">레슨 코스 <span class="count">${ordered.length}</span></h2>
-      <div class="course-grid">${ordered.map((c) => {
-        const done = doneCount(c);
-        return `<button class="course-card ${active === c ? 'active' : ''}" data-id="${c.id}" data-q="${esc((c.name + ' ' + c.id).toLowerCase())}">
-          ${badge(c, 'lg')}
-          <span class="cname">${esc(c.name)}</span>
-          <span class="ctag ${c.basic ? '' : 'full'}">${c.basic ? '기초 25단어' : `정규 ${c.flat.length}레슨`}</span>
-          <span class="mini-bar"><span style="width:${Math.round((100 * done) / c.flat.length)}%"></span></span>
-        </button>`;
-      }).join('')}</div>
+      <h2 class="sec-title">인기 언어 <span class="count">${popular.length}</span></h2>
+      <p class="sec-desc">단어부터 여행·쇼핑·일상 문장까지 배우는 긴 코스예요.</p>
+      <div class="course-grid">${popular.map(card).join('')}</div>
+      <h2 class="sec-title">기초 코스 <span class="count">${basics.length}</span></h2>
+      <p class="sec-desc">그림 단어 50개로 시작하는 10레슨 코스예요.</p>
+      <div class="course-grid">${basics.map(card).join('')}</div>
       <h2 class="sec-title">공부 자료만 있는 언어 <span class="count">${others.length}</span></h2>
       <p class="sec-desc">아래 언어는 아직 레슨이 없어요. 누르면 사용 지역·문자·공부 방법을 정리한 자료가 열려요.</p>
       <div class="lang-list card">${others.map((l) => `<a class="lang-row" href="${REPO}/blob/main/${l.id}.md" target="_blank" rel="noopener" data-q="${esc((l.ko + ' ' + l.en + ' ' + l.id).toLowerCase())}">
@@ -709,7 +779,7 @@
       <div class="learn-step"><span class="pill">새로 배울 ${it.sentence ? '문장' : '단어'}</span><span>${L.li + 1} / ${L.learn.length}</span></div>
       <article class="learn-card" style="--c:${L.lesson.unit.color}">
         <div class="learn-art">${it.pic ? `<span class="pic-xl">${it.pic}</span>` : mascot('happy', 112)}</div>
-        <div class="learn-word" ${tAttr(course)}>${esc(it.disp)}</div>
+        <div class="learn-word ${it.sentence || [...it.disp].length > 12 ? 'long' : ''}" ${tAttr(course)}>${esc(it.disp)}</div>
         ${it.p ? `<div class="learn-roman">${esc(it.p)}</div>` : ''}
         ${it.h ? `<div class="learn-pron"><span class="pron-label">발음</span><span class="pron">[${esc(it.h)}]</span></div>` : ''}
         <div class="learn-mean">${esc(it.k)}</div>

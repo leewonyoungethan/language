@@ -161,6 +161,8 @@ h1, h2, h3, p { margin: 0; }
 .badge.flag .flag-svg { width: 100%; height: 100%; display: block; }
 .badge.flag { border-radius: 50%; }
 .badge.flag svg { transform: scale(1.5); }
+.badge.flag img { width: 100%; height: 100%; display: block; object-fit: cover; }
+.badge.flag { box-shadow: 0 0 0 2px rgba(255, 255, 255, .85), 0 4px 12px rgba(0, 0, 0, .18); }
 .badge.sm { width: 30px; height: 30px; font-size: 15px; }
 .badge.lg { width: 64px; height: 64px; font-size: 30px; }
 .badge.xs { width: 30px; height: 30px; font-size: 14px; }
@@ -493,9 +495,10 @@ h1, h2, h3, p { margin: 0; }
 @keyframes card-in { from { opacity: 0; transform: perspective(800px) rotateY(-24deg) translateX(30px); } to { opacity: 1; transform: none; } }
 .learn-art { position: relative; min-height: 112px; display: grid; place-items: center; }
 .learn-word { position: relative; font-family: var(--display); font-size: 42px; line-height: 1.2; word-break: break-word; }
+.learn-word.long { font-size: 30px; }
 .learn-roman { color: var(--muted); font-size: 16px; }
-.learn-pron { display: flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; background: color-mix(in srgb, var(--coral) 12%, transparent); }
-.pron-label { font-size: 12px; color: var(--coral); letter-spacing: .06em; }
+.learn-pron { display: flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 18px; background: color-mix(in srgb, var(--coral) 12%, transparent); }
+.pron-label { flex: none; white-space: nowrap; font-size: 12px; color: var(--coral); letter-spacing: .06em; }
 .learn-pron .pron { font-size: 20px; }
 .learn-mean { margin-top: 6px; font-family: var(--display); font-size: 24px; color: var(--brand); }
 .learn-audio { display: flex; gap: 8px; margin-top: 8px; }
