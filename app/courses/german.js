@@ -4,6 +4,7 @@
   id: 'german',
   name: '독일어',
   flag: '🇩🇪',
+  flagSvg: '<svg viewBox="0 0 5 3" class="flag-svg" aria-hidden="true"><rect width="5" height="3" fill="#FFCE00"/><rect width="5" height="2" fill="#DD0000"/><rect width="5" height="1" fill="#000"/></svg>',
   lang: 'de',
   tts: 'de-DE',
   joiner: ' ',
@@ -12,7 +13,7 @@
   guide: 'https://github.com/leewonyoungethan/language/blob/main/german.md',
   units: [
     {
-      title: '기초 표현', desc: '인사하고 나를 소개해요', color: '#58cc02',
+      title: '기초 표현', desc: '인사하고 나를 소개해요', color: '#58cc02', icon: '👋',
       lessons: [
         { title: '인사', items: [
           ['Hallo', '안녕'],
@@ -43,7 +44,7 @@
       ],
     },
     {
-      title: '가족과 사람', desc: '가족과 친구를 소개해요', color: '#ce82ff',
+      title: '가족과 사람', desc: '가족과 친구를 소개해요', color: '#ce82ff', icon: '👨‍👩‍👧',
       lessons: [
         { title: '가족', items: [
           ['der Vater', '아버지'],
@@ -71,7 +72,7 @@
       ],
     },
     {
-      title: '음식', desc: '먹고 마시는 표현을 배워요', color: '#ff9600',
+      title: '음식', desc: '먹고 마시는 표현을 배워요', color: '#ff9600', icon: '🍎',
       lessons: [
         { title: '먹을거리', items: [
           ['das Brot', '빵'],
@@ -100,7 +101,7 @@
       ],
     },
     {
-      title: '숫자와 시간', desc: '숫자를 세고 시간을 말해요', color: '#1cb0f6',
+      title: '숫자와 시간', desc: '숫자를 세고 시간을 말해요', color: '#1cb0f6', icon: '🕗',
       lessons: [
         { title: '숫자 1~5', items: [
           ['eins', '1 (하나)'],
@@ -127,7 +128,7 @@
       ],
     },
     {
-      title: '장소', desc: '장소를 찾아가요', color: '#ff4b4b',
+      title: '장소', desc: '장소를 찾아가요', color: '#ff4b4b', icon: '🗺️',
       lessons: [
         { title: '장소', items: [
           ['das Haus', '집'],
@@ -148,7 +149,7 @@
       ],
     },
     {
-      title: '일상', desc: '하루 일과를 말해요', color: '#2b70c9',
+      title: '일상', desc: '하루 일과를 말해요', color: '#2b70c9', icon: '☀️',
       lessons: [
         { title: '나의 하루', items: [
           ['Ich lerne Deutsch.', '나는 독일어를 배워요.'],

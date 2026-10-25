@@ -2,6 +2,7 @@
   'use strict';
 
   const COURSES = window.COURSES || [];
+  const PICTURES = window.PICTURES || {};
   const STORE_KEY = 'language-lessons-v1';
   const MAX_HEARTS = 5;
   const REFILL_MS = 30 * 60 * 1000;
@@ -37,6 +38,75 @@
     app.innerHTML = html;
     window.scrollTo(0, 0);
   }
+  // 받침이 있으면 '은', 없으면 '는' (괄호 안 설명은 건너뛰고 마지막 한글로 판단)
+  function topicParticle(word) {
+    const hangul = word.replace(/\s*\(.*?\)\s*/g, '').match(/[가-힣]/g);
+    if (!hangul) return '은(는)';
+    return (hangul[hangul.length - 1].charCodeAt(0) - 0xac00) % 28 ? '은' : '는';
+  }
+
+  // ---------- graphics ----------
+  // 마스코트 '말랑이': 기분에 따라 표정이 바뀌어요 (happy, wow, sad, think)
+  function mascot(mood, size) {
+    mood = mood || 'happy';
+    const eyeY = mood === 'sad' ? 60 : 56;
+    const [px, py] = mood === 'think' ? [3, -3] : mood === 'sad' ? [0, 3] : [1, 2];
+    const pr = mood === 'wow' ? 6.5 : 5.5;
+    const ink = '#3d2416', dark = '#3a7d00';
+    const mouth = {
+      happy: `<path d="M47 73 Q60 93 73 73 Z" fill="${ink}"/><path d="M53 81 Q60 87 67 81 Q60 85 53 81 Z" fill="#ff7b8a"/>`,
+      wow: `<ellipse cx="60" cy="80" rx="7" ry="8.5" fill="${ink}"/>`,
+      sad: `<path d="M49 85 Q60 75 71 85" fill="none" stroke="${ink}" stroke-width="4" stroke-linecap="round"/>`,
+      think: `<path d="M52 81 Q61 77 69 80" fill="none" stroke="${ink}" stroke-width="4" stroke-linecap="round"/>`,
+    }[mood];
+    const brows = mood === 'sad'
+      ? `<path d="M35 43 L51 47 M85 43 L69 47" stroke="${dark}" stroke-width="4" stroke-linecap="round"/>`
+      : mood === 'wow' || mood === 'think'
+        ? `<path d="M36 39 Q45 33 54 39 M66 39 Q75 33 84 39" fill="none" stroke="${dark}" stroke-width="4" stroke-linecap="round"/>`
+        : '';
+    const raised = mood === 'happy' || mood === 'wow';
+    const arms = `<ellipse cx="21" cy="76" rx="8" ry="13" transform="rotate(25 21 76)" fill="#58cc02"/>` + (raised
+      ? `<ellipse cx="101" cy="46" rx="8" ry="14" transform="rotate(35 101 46)" fill="#58cc02"/>`
+      : `<ellipse cx="99" cy="76" rx="8" ry="13" transform="rotate(-25 99 76)" fill="#58cc02"/>`);
+    const eye = (x) => `<ellipse cx="${x}" cy="${eyeY}" rx="11" ry="12" fill="#fff"/>
+      <circle cx="${x + px}" cy="${eyeY + py}" r="${pr}" fill="#2b2b2b"/>
+      <circle cx="${x + px + 2}" cy="${eyeY + py - 2.5}" r="1.9" fill="#fff"/>`;
+    return `<svg class="mascot mascot-${mood}" viewBox="0 0 120 120" width="${size}" height="${size}" aria-hidden="true">
+      <ellipse cx="60" cy="113" rx="30" ry="5" fill="rgba(0,0,0,.15)"/>
+      ${arms}
+      <ellipse cx="45" cy="105" rx="10" ry="6" fill="#4ea600"/><ellipse cx="75" cy="105" rx="10" ry="6" fill="#4ea600"/>
+      <path d="M60 28 C58 15 67 6 80 8 C78 21 69 27 60 28 Z" fill="#58a700"/>
+      <path d="M60 30 L60 20" stroke="${dark}" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="60" cy="66" r="40" fill="#58cc02"/>
+      <ellipse cx="60" cy="83" rx="25" ry="18" fill="#89e219"/>
+      ${brows}${eye(45)}${eye(75)}
+      <ellipse cx="33" cy="74" rx="6" ry="4" fill="#ff9fb1" opacity=".75"/><ellipse cx="87" cy="74" rx="6" ry="4" fill="#ff9fb1" opacity=".75"/>
+      ${mouth}
+      ${mood === 'think' ? `<text x="96" y="30" font-size="22" font-weight="900" fill="${dark}">?</text>` : ''}
+    </svg>`;
+  }
+  const speech = (mood, inner, size) => `<div class="speech">${mascot(mood, size || 96)}<div class="bubble">${inner}</div></div>`;
+  const flagHtml = (course) => course.flagSvg || `<span class="flag-emoji">${course.flag}</span>`;
+
+  function confetti() {
+    try { if (matchMedia('(prefers-reduced-motion: reduce)').matches) return; } catch (e) { /* ignore */ }
+    const box = document.createElement('div');
+    box.className = 'confetti';
+    const colors = ['#58cc02', '#1cb0f6', '#ffc800', '#ff4b4b', '#ce82ff', '#ff9600'];
+    for (let i = 0; i < 90; i++) {
+      const s = document.createElement('i');
+      s.style.left = Math.random() * 100 + '%';
+      s.style.background = pick(colors);
+      s.style.animationDelay = Math.random() * 0.6 + 's';
+      s.style.animationDuration = 2 + Math.random() * 1.5 + 's';
+      s.style.setProperty('--r', Math.random() * 720 - 360 + 'deg');
+      s.style.setProperty('--dx', Math.random() * 160 - 80 + 'px');
+      box.appendChild(s);
+    }
+    document.body.appendChild(box);
+    setTimeout(() => box.remove(), 4500);
+  }
+
   let toastTimer;
   function toast(msg) {
     const t = $('#toast');
@@ -129,10 +199,12 @@
           kTokens: k.replace(PUNCT, ' ').trim().split(/\s+/),
           sentence: tokens.length >= 3,
           disp: course.joiner === '' ? t.replace(/\s+/g, '') : t,
+          pic: PICTURES[k] || '',
         };
       });
     }));
     course.flat = course.units.flatMap((u) => u.lessons);
+    course.picCount = new Set(course.flat.flatMap((l) => l.items).map((x) => x.pic).filter(Boolean)).size;
     return course;
   }
   COURSES.forEach(prepare);
@@ -204,7 +276,7 @@
   }
 
   // Wrong options, preferring the same kind (word vs sentence) and never repeating a key.
-  function distractors(course, item, pool, n, keyFn) {
+  function distractors(course, item, pool, n, keyFn, allow) {
     const seen = new Set([keyFn(item)]);
     const out = [];
     const rest = allItems(course);
@@ -212,7 +284,7 @@
       .concat(shuffle(pool.filter((x) => x.sentence !== item.sentence)), shuffle(rest));
     for (const x of order) {
       const k = keyFn(x);
-      if (seen.has(k)) continue;
+      if (seen.has(k) || (allow && !allow(x))) continue;
       seen.add(k);
       out.push(x);
       if (out.length >= n) break;
@@ -230,10 +302,13 @@
   function practiceType(course, it) {
     const speakOk = canSpeak(course.tts);
     const types = it.sentence ? ['build', 'build'] : ['kochoice'];
+    if (hasPictureQuiz(course, it)) types.push('picture');
     if (speakOk) types.push('listen');
     if (course.typing && (!it.sentence || it.tokens.length <= 5)) types.push('type');
     return pick(types);
   }
+
+  const hasPictureQuiz = (course, it) => !it.sentence && !!it.pic && course.picCount >= 4;
 
   function matchItems(list) {
     const words = uniqueBy(uniqueBy(list.filter((x) => !x.sentence), (x) => x.disp), (x) => x.k);
@@ -244,7 +319,8 @@
     const pool = poolFor(course, lesson);
     const items = lesson.items;
     const first = items.map((it) => ({
-      type: it.sentence && it.kTokens.length >= 2 ? 'kobuild' : 'intro', item: it, pool,
+      type: it.sentence && it.kTokens.length >= 2 ? 'kobuild' : hasPictureQuiz(course, it) ? 'picture' : 'intro',
+      item: it, pool,
     }));
     const second = shuffle(items).map((it) => ({ type: practiceType(course, it), item: it, pool }));
     let words = matchItems(items);
@@ -268,7 +344,7 @@
     syncHearts();
     const st = currentStreak();
     return `<header class="top">
-      <button class="course-btn" title="코스 바꾸기" aria-label="코스 바꾸기">${course.flag}</button>
+      <button class="course-btn" title="코스 바꾸기" aria-label="코스 바꾸기">${flagHtml(course)}</button>
       <div class="stat streak ${st ? '' : 'off'}" title="연속 학습">🔥 ${st}</div>
       <div class="stat xp" title="총 XP">⚡ ${S.xp}</div>
       <div class="stat heart" title="${S.hearts < MAX_HEARTS ? nextHeartMinutes() + '분 뒤 하트 1개 충전' : '하트 가득'}">❤️ ${S.hearts}</div>
@@ -300,8 +376,9 @@
       }).join('');
       return `<section class="unit">
         <div class="unit-banner" style="--c:${u.color}">
-          <div><div class="unit-no">유닛 ${ui + 1}</div><h2>${esc(u.title)}</h2><p>${esc(u.desc)}</p></div>
-          ${ui === 0 && course.guide ? `<a href="${course.guide}" target="_blank" rel="noopener">📖 가이드</a>` : ''}
+          <div><div class="unit-no">유닛 ${ui + 1}</div><h2>${esc(u.title)}</h2><p>${esc(u.desc)}</p>
+            ${ui === 0 && course.guide ? `<a class="guide" href="${course.guide}" target="_blank" rel="noopener">📖 공부 가이드</a>` : ''}</div>
+          ${u.icon ? `<span class="unit-icon" aria-hidden="true">${u.icon}</span>` : ''}
         </div>
         <div class="path">${nodes}</div>
       </section>`;
@@ -310,6 +387,10 @@
     render(`${topBar(course)}
       <div class="page">
         <div class="goal">
+          ${speech(daily >= DAILY_GOAL ? 'wow' : 'happy', esc(
+            daily >= DAILY_GOAL ? '오늘 목표 달성! 정말 대단해요!'
+              : daily > 0 ? `목표까지 ${DAILY_GOAL - daily} XP 남았어요. 힘내요!`
+                : anyDone ? '오늘도 같이 공부해요!' : `안녕! 나는 말랑이야. 같이 ${course.name}${course.name.endsWith('어') ? '를' : '을'} 배워 볼까?`), 72)}
           <div class="goal-row"><span class="goal-title">${daily >= DAILY_GOAL ? '🎉 오늘의 목표 달성!' : '🎯 오늘의 목표'}</span><span class="goal-num">${Math.min(daily, DAILY_GOAL)} / ${DAILY_GOAL} XP</span></div>
           <div class="meter"><span style="width:${Math.min(100, Math.round((100 * daily) / DAILY_GOAL))}%"></span></div>
           <div class="actions">
@@ -342,11 +423,11 @@
   function showCourses() {
     const active = getCourse(S.course);
     render(`<div class="page">
-      <header class="simple-top"><h1>무엇을 배울까요?</h1>${active ? '<button class="icon-btn back" aria-label="닫기">✕</button>' : ''}</header>
+      <header class="simple-top">${speech('happy', '<h1>무엇을 배울까요?</h1>', 84)}${active ? '<button class="icon-btn back" aria-label="닫기">✕</button>' : ''}</header>
       <div class="course-grid">${COURSES.map((c) => {
         const done = c.flat.filter((l) => isDone(c, l)).length;
         return `<button class="course-card ${active === c ? 'active' : ''}" data-id="${c.id}">
-          <span class="flag">${c.flag}</span>
+          <span class="flag">${flagHtml(c)}</span>
           <span class="cname">${esc(c.name)}</span>
           <span class="cmeta">${c.units.length}개 유닛 · ${done}/${c.flat.length} 레슨</span>
           <span class="mini-bar"><span style="width:${Math.round((100 * done) / c.flat.length)}%"></span></span>
@@ -466,7 +547,7 @@
     const title = practice ? '복습 완료!' : perfect ? '완벽한 레슨!' : '레슨 완료!';
     L = null;
     render(`<div class="center">
-      <div class="big-emoji">${perfect ? '🏆' : practice ? '💪' : '🎉'}</div>
+      <div class="big-emoji">${mascot(perfect ? 'wow' : 'happy', 150)}</div>
       <h1>${title}</h1>
       ${streakUp ? `<p>🔥 <b>${currentStreak()}일</b> 연속 학습 중이에요!</p>` : ''}
       ${practice ? '<p>복습 보상으로 하트 1개를 받았어요 ❤️</p>' : ''}
@@ -478,6 +559,7 @@
       <button class="btn check">계속</button>
     </div>`);
     $('.check').onclick = showHome;
+    confetti();
   }
 
   function showNoHearts(course) {
@@ -486,7 +568,7 @@
     save();
     const learned = course.flat.some((l) => isDone(course, l));
     render(`<div class="center">
-      <div class="big-emoji">💔</div>
+      <div class="big-emoji">${mascot('sad', 150)}</div>
       <h1 class="red">하트가 다 떨어졌어요</h1>
       <p>하트는 30분마다 1개씩 다시 채워져요.<br>다음 하트까지 약 <b>${nextHeartMinutes()}분</b> 남았어요.${learned ? '<br>복습을 끝내면 하트를 바로 1개 받을 수 있어요!' : ''}</p>
       ${learned ? '<button class="btn blue practice">💪 복습해서 하트 받기</button>' : ''}
@@ -506,11 +588,12 @@
     const speakBtn = (text) => (speakOk ? `<button class="icon-btn speak" data-say="${esc(text)}" aria-label="듣기">🔊</button>` : '');
     const targetHtml = (x, withPinyin) => `<span lang="${course.lang}">${esc(x.disp)}</span>${withPinyin && x.p ? `<small class="pinyin">${esc(x.p)}</small>` : ''}`;
     const answerTarget = (x) => `${targetHtml(x, true)}<small>${esc(x.k)}</small>`;
-    const card = (x) => `<div class="card">${speakBtn(x.disp)}<div class="target"><span class="target-text" lang="${course.lang}">${esc(x.disp)}</span>${x.p ? `<span class="pinyin">${esc(x.p)}</span>` : ''}</div></div>`;
+    // 마스코트가 목표 언어 문장을 말하는 말풍선
+    const said = (x, mood) => speech(mood || 'happy', `<div class="bubble-row">${speakBtn(x.disp)}<div class="target"><span class="target-text" lang="${course.lang}">${esc(x.disp)}</span>${x.p ? `<span class="pinyin">${esc(x.p)}</span>` : ''}</div></div>`);
     let ctrl;
 
-    function choices(prompt, body, options, correct, optHtml, answer, extra) {
-      main.innerHTML = `<h1 class="prompt">${prompt}</h1>${body}<div class="choices">${options.map((o, i) =>
+    function choices(prompt, body, options, correct, optHtml, answer, extra, layout) {
+      main.innerHTML = `<h1 class="prompt">${prompt}</h1>${body}<div class="choices ${layout || ''}">${options.map((o, i) =>
         `<button class="choice" data-i="${i}"><span class="num">${i + 1}</span><span class="choice-text">${optHtml(o)}</span></button>`).join('')}</div>`;
       let sel = null, locked = false;
       const btns = $$('.choice', main);
@@ -581,9 +664,17 @@
     switch (ex.type) {
       case 'intro': {
         const opts = shuffle([it].concat(distractors(course, it, ex.pool, 3, (x) => x.k)));
-        ctrl = choices(it.sentence ? '이 문장은 무슨 뜻일까요?' : '새 표현이에요! 뜻을 고르세요', card(it), opts, opts.indexOf(it),
+        ctrl = choices(it.sentence ? '이 문장은 무슨 뜻일까요?' : '새 표현이에요! 뜻을 고르세요', said(it, 'think'), opts, opts.indexOf(it),
           (o) => esc(o.k), answerTarget(it));
         if (speakOk) setTimeout(() => say(it.disp), 250);
+        break;
+      }
+      case 'picture': {
+        const opts = shuffle([it].concat(distractors(course, it, ex.pool, 3, (x) => x.pic || x.k, (x) => !x.sentence && !!x.pic)));
+        ctrl = choices(`'${esc(it.k)}'${topicParticle(it.k)} 어느 것일까요?`, '', opts, opts.indexOf(it),
+          (o) => `<span class="pic" aria-hidden="true">${o.pic}</span><span lang="${course.lang}">${esc(o.disp)}</span>${o.p ? `<small class="pinyin">${esc(o.p)}</small>` : ''}`,
+          answerTarget(it), {}, 'pic-grid');
+        ctrl.say = it.disp;
         break;
       }
       case 'kochoice': {
@@ -609,7 +700,7 @@
         break;
       }
       case 'kobuild': {
-        ctrl = wordBank('한국어로 옮겨 보세요', card(it), it.kTokens, extraTokens(it, ex.pool, 'kTokens', 3), ' ',
+        ctrl = wordBank('한국어로 옮겨 보세요', said(it), it.kTokens, extraTokens(it, ex.pool, 'kTokens', 3), ' ',
           `${esc(it.k)}<small>${esc(it.disp)}</small>`, 'ko', null);
         if (speakOk) setTimeout(() => say(it.disp), 250);
         break;
@@ -686,7 +777,7 @@
     ctrl.check = () => {
       const r = baseCheck();
       if (r.ok && ex.type !== 'match') {
-        r.note = `<span lang="${course.lang}">${esc(it.disp)}</span>${it.p ? ` · ${esc(it.p)}` : ''}<small>${esc(it.k)}</small>`;
+        r.note = `${it.pic ? `${it.pic} ` : ''}<span lang="${course.lang}">${esc(it.disp)}</span>${it.p ? ` · ${esc(it.p)}` : ''}<small>${esc(it.k)}</small>`;
         if (speakOk && ctrl.say) r.say = ctrl.say;
       }
       return r;

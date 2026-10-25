@@ -1,9 +1,26 @@
 // 항목 형식: [중국어 (띄어쓰기로 단어 구분), 한국어 뜻, 병음]
 // 화면에는 띄어쓰기 없이 보여 주고, 띄어쓰기는 '단어 배열' 문제의 조각으로 써요.
+(function () {
+  // 오성홍기: 큰 별 1개와, 큰 별을 향하는 작은 별 4개
+  function star(cx, cy, r, rot) {
+    const pts = [];
+    for (let i = 0; i < 10; i++) {
+      const a = ((rot - 90 + i * 36) * Math.PI) / 180;
+      const rr = i % 2 ? r * 0.382 : r;
+      pts.push((cx + rr * Math.cos(a)).toFixed(2) + ',' + (cy + rr * Math.sin(a)).toFixed(2));
+    }
+    return '<polygon points="' + pts.join(' ') + '" fill="#FFDE00"/>';
+  }
+  const small = [[10, 2], [12, 4], [12, 7], [10, 9]].map(([x, y]) =>
+    star(x, y, 1, (Math.atan2(5 - y, 5 - x) * 180) / Math.PI + 90)).join('');
+  window.CN_FLAG = '<svg viewBox="0 0 30 20" class="flag-svg" aria-hidden="true"><rect width="30" height="20" fill="#EE1C25"/>' + star(5, 5, 3, 0) + small + '</svg>';
+})();
+
 (window.COURSES = window.COURSES || []).push({
   id: 'chinese',
   name: '중국어',
   flag: '🇨🇳',
+  flagSvg: window.CN_FLAG,
   lang: 'zh-CN',
   tts: 'zh-CN',
   joiner: '',
@@ -11,7 +28,7 @@
   guide: 'https://github.com/leewonyoungethan/language/blob/main/chinese.md',
   units: [
     {
-      title: '기초 표현', desc: '인사하고 나를 소개해요', color: '#58cc02',
+      title: '기초 표현', desc: '인사하고 나를 소개해요', color: '#58cc02', icon: '👋',
       lessons: [
         { title: '인사', items: [
           ['你好', '안녕하세요', 'nǐ hǎo'],
@@ -41,7 +58,7 @@
       ],
     },
     {
-      title: '가족과 사람', desc: '가족과 친구를 소개해요', color: '#ce82ff',
+      title: '가족과 사람', desc: '가족과 친구를 소개해요', color: '#ce82ff', icon: '👨‍👩‍👧',
       lessons: [
         { title: '가족', items: [
           ['爸爸', '아빠', 'bàba'],
@@ -69,7 +86,7 @@
       ],
     },
     {
-      title: '음식', desc: '먹고 마시는 표현을 배워요', color: '#ff9600',
+      title: '음식', desc: '먹고 마시는 표현을 배워요', color: '#ff9600', icon: '🍎',
       lessons: [
         { title: '먹을거리', items: [
           ['水', '물', 'shuǐ'],
@@ -98,7 +115,7 @@
       ],
     },
     {
-      title: '숫자와 시간', desc: '숫자를 세고 시간을 말해요', color: '#1cb0f6',
+      title: '숫자와 시간', desc: '숫자를 세고 시간을 말해요', color: '#1cb0f6', icon: '🕗',
       lessons: [
         { title: '숫자 1~5', items: [
           ['一', '1 (일)', 'yī'],
@@ -125,7 +142,7 @@
       ],
     },
     {
-      title: '장소', desc: '장소를 찾아가요', color: '#ff4b4b',
+      title: '장소', desc: '장소를 찾아가요', color: '#ff4b4b', icon: '🗺️',
       lessons: [
         { title: '장소', items: [
           ['家', '집', 'jiā'],
@@ -146,7 +163,7 @@
       ],
     },
     {
-      title: '일상', desc: '하루 일과를 말해요', color: '#2b70c9',
+      title: '일상', desc: '하루 일과를 말해요', color: '#2b70c9', icon: '☀️',
       lessons: [
         { title: '나의 하루', items: [
           ['我 学习 汉语', '나는 중국어를 공부해요', 'wǒ xuéxí Hànyǔ'],
