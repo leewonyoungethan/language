@@ -1,0 +1,170 @@
+// 항목 형식: [독일어, 한국어 뜻]
+// 단어가 3개 이상이면 문장으로 보고 '단어 배열' 문제를 만들어요.
+(window.COURSES = window.COURSES || []).push({
+  id: 'german',
+  name: '독일어',
+  flag: '🇩🇪',
+  lang: 'de',
+  tts: 'de-DE',
+  joiner: ' ',
+  typing: true,
+  chars: ['ä', 'ö', 'ü', 'ß'],
+  guide: 'https://github.com/leewonyoungethan/language/blob/main/german.md',
+  units: [
+    {
+      title: '기초 표현', desc: '인사하고 나를 소개해요', color: '#58cc02',
+      lessons: [
+        { title: '인사', items: [
+          ['Hallo', '안녕'],
+          ['Guten Morgen', '좋은 아침이에요'],
+          ['Guten Tag', '안녕하세요'],
+          ['Guten Abend', '좋은 저녁이에요'],
+          ['Tschüss', '잘 가'],
+          ['Danke', '고마워요'],
+          ['Bitte', '천만에요'],
+        ] },
+        { title: '자기소개', items: [
+          ['Ich bin Anna.', '나는 안나예요.'],
+          ['Ich heiße Max.', '내 이름은 막스예요.'],
+          ['Wie heißt du?', '네 이름은 뭐야?'],
+          ['Ich komme aus Korea.', '나는 한국에서 왔어요.'],
+          ['Woher kommst du?', '너는 어디에서 왔어?'],
+          ['Freut mich.', '반가워요.'],
+        ] },
+        { title: '안부', items: [
+          ['Wie geht es dir?', '어떻게 지내?'],
+          ['Mir geht es gut.', '나는 잘 지내요.'],
+          ['Sehr gut, danke.', '아주 좋아요, 고마워요.'],
+          ['Und dir?', '너는?'],
+          ['Nicht so gut.', '그렇게 좋지 않아요.'],
+          ['Ja', '네'],
+          ['Nein', '아니요'],
+        ] },
+      ],
+    },
+    {
+      title: '가족과 사람', desc: '가족과 친구를 소개해요', color: '#ce82ff',
+      lessons: [
+        { title: '가족', items: [
+          ['der Vater', '아버지'],
+          ['die Mutter', '어머니'],
+          ['der Bruder', '남자 형제'],
+          ['die Schwester', '여자 형제'],
+          ['das Kind', '아이'],
+          ['die Familie', '가족'],
+        ] },
+        { title: '가족 소개', items: [
+          ['Das ist mein Vater.', '이분은 우리 아버지예요.'],
+          ['Das ist meine Mutter.', '이분은 우리 어머니예요.'],
+          ['Ich habe einen Bruder.', '나는 남자 형제가 한 명 있어요.'],
+          ['Hast du Geschwister?', '너는 형제자매가 있어?'],
+          ['Meine Familie ist groß.', '우리 가족은 식구가 많아요.'],
+        ] },
+        { title: '사람', items: [
+          ['der Mann', '남자'],
+          ['die Frau', '여자'],
+          ['der Freund', '친구 (남자)'],
+          ['die Freundin', '친구 (여자)'],
+          ['Er ist mein Freund.', '그는 내 친구예요.'],
+          ['Sie ist nett.', '그녀는 친절해요.'],
+        ] },
+      ],
+    },
+    {
+      title: '음식', desc: '먹고 마시는 표현을 배워요', color: '#ff9600',
+      lessons: [
+        { title: '먹을거리', items: [
+          ['das Brot', '빵'],
+          ['das Wasser', '물'],
+          ['der Kaffee', '커피'],
+          ['der Tee', '차'],
+          ['die Milch', '우유'],
+          ['der Apfel', '사과'],
+        ] },
+        { title: '먹고 마시기', items: [
+          ['Ich trinke Kaffee.', '나는 커피를 마셔요.'],
+          ['Ich esse Brot.', '나는 빵을 먹어요.'],
+          ['Ich möchte Wasser, bitte.', '물을 주세요.'],
+          ['Das schmeckt gut.', '이거 맛있어요.'],
+          ['Ich habe Hunger.', '나는 배고파요.'],
+          ['Ich habe Durst.', '나는 목말라요.'],
+        ] },
+        { title: '식당', items: [
+          ['die Rechnung', '계산서'],
+          ['Die Rechnung, bitte.', '계산서 주세요.'],
+          ['Was möchtest du?', '너는 뭘 먹고 싶어?'],
+          ['Ich nehme Tee.', '나는 차로 할게요.'],
+          ['lecker', '맛있는'],
+          ['Guten Appetit!', '맛있게 드세요!'],
+        ] },
+      ],
+    },
+    {
+      title: '숫자와 시간', desc: '숫자를 세고 시간을 말해요', color: '#1cb0f6',
+      lessons: [
+        { title: '숫자 1~5', items: [
+          ['eins', '1 (하나)'],
+          ['zwei', '2 (둘)'],
+          ['drei', '3 (셋)'],
+          ['vier', '4 (넷)'],
+          ['fünf', '5 (다섯)'],
+        ] },
+        { title: '숫자 6~10', items: [
+          ['sechs', '6 (여섯)'],
+          ['sieben', '7 (일곱)'],
+          ['acht', '8 (여덟)'],
+          ['neun', '9 (아홉)'],
+          ['zehn', '10 (열)'],
+        ] },
+        { title: '시간', items: [
+          ['Wie spät ist es?', '지금 몇 시예요?'],
+          ['Es ist acht Uhr.', '지금 8시예요.'],
+          ['heute', '오늘'],
+          ['morgen', '내일'],
+          ['Heute ist Montag.', '오늘은 월요일이에요.'],
+          ['Bis morgen!', '내일 봐요!'],
+        ] },
+      ],
+    },
+    {
+      title: '장소', desc: '장소를 찾아가요', color: '#ff4b4b',
+      lessons: [
+        { title: '장소', items: [
+          ['das Haus', '집'],
+          ['die Schule', '학교'],
+          ['der Bahnhof', '기차역'],
+          ['die Stadt', '도시'],
+          ['das Hotel', '호텔'],
+          ['der Supermarkt', '슈퍼마켓'],
+        ] },
+        { title: '길 찾기', items: [
+          ['Wo ist der Bahnhof?', '기차역은 어디에 있어요?'],
+          ['Das Hotel ist dort.', '호텔은 저기에 있어요.'],
+          ['Ich gehe nach Hause.', '나는 집에 가요.'],
+          ['Ich gehe zur Schule.', '나는 학교에 가요.'],
+          ['links', '왼쪽으로'],
+          ['rechts', '오른쪽으로'],
+        ] },
+      ],
+    },
+    {
+      title: '일상', desc: '하루 일과를 말해요', color: '#2b70c9',
+      lessons: [
+        { title: '나의 하루', items: [
+          ['Ich lerne Deutsch.', '나는 독일어를 배워요.'],
+          ['Ich wohne in Seoul.', '나는 서울에 살아요.'],
+          ['Ich arbeite heute.', '나는 오늘 일해요.'],
+          ['Ich lese ein Buch.', '나는 책을 읽어요.'],
+          ['Ich spiele Fußball.', '나는 축구를 해요.'],
+        ] },
+        { title: '시간 있어?', items: [
+          ['Was machst du?', '너는 뭐 해?'],
+          ['Ich höre Musik.', '나는 음악을 들어요.'],
+          ['Ich bin müde.', '나는 피곤해요.'],
+          ['Hast du Zeit?', '너 시간 있어?'],
+          ['Ja, ich habe Zeit.', '응, 나는 시간 있어.'],
+        ] },
+      ],
+    },
+  ],
+});
