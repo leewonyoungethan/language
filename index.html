@@ -145,6 +145,62 @@ h1,h2,h3{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance;l
 .tile span{font-size:12px;color:var(--muted);letter-spacing:.04em}
 
 .toast{position:fixed;left:50%;top:calc(12px + env(safe-area-inset-top,0px));transform:translateX(-50%);max-width:min(92vw,460px);background:var(--ink);color:var(--bg);padding:12px 16px;border-radius:14px;font-size:14px;z-index:20}
+/* 전투 */
+.arena{margin-top:14px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding:12px 18px 10px;border-radius:18px;background:color-mix(in srgb,var(--accent) 9%,var(--surface));border:2px solid var(--line);border-bottom:6px solid color-mix(in srgb,var(--good) 55%,var(--surface))}
+.fighter{position:relative;display:grid;justify-items:center;gap:4px;width:104px}
+.fighter .mas{width:64px;height:64px}
+.monster{width:72px;height:72px}
+.monster.boss{width:92px;height:92px}
+.monster svg{width:100%;height:100%;display:block}
+.hpbar{width:100%;height:8px;border-radius:6px;background:var(--line);overflow:hidden}
+.hpbar i{display:block;height:100%;width:100%;transition:width .35s}
+.me .hpbar i{background:var(--bad)}
+.foe .hpbar i{background:var(--good)}
+.fname{font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap}
+.vs{font-family:var(--display);font-size:20px;color:var(--muted);align-self:center}
+.attack{animation:attack .4s}
+@keyframes attack{40%{transform:translateX(28px) rotate(8deg)}}
+.hurt{animation:hurt .4s}
+@keyframes hurt{25%{transform:translateX(6px);filter:brightness(1.7)}75%{transform:translateX(-6px)}}
+.lunge{animation:lunge .45s}
+@keyframes lunge{40%{transform:translateX(-32px) scale(1.12)}}
+.down{animation:down .7s forwards}
+@keyframes down{to{transform:rotate(90deg) translateX(8px);opacity:.45}}
+.pop-num{position:absolute;top:-8px;left:50%;transform:translateX(-50%);font-family:var(--display);font-size:22px;color:var(--bad);pointer-events:none;white-space:nowrap;animation:rise .9s forwards}
+.pop-num.good{color:var(--good)}
+@keyframes rise{to{transform:translate(-50%,-32px);opacity:0}}
+.ko-wrap{position:relative;width:130px;height:130px}
+.ko-wrap svg{width:100%;height:100%;filter:grayscale(.4)}
+.ko-tag{position:absolute;right:-14px;top:6px;transform:rotate(14deg);font-family:var(--display);font-size:30px;color:var(--bad);border:3px solid var(--bad);border-radius:10px;padding:0 8px;background:var(--surface)}
+.node button svg{width:52px;height:52px}
+.node.boss button{width:100px;height:92px}
+.node.boss button svg{width:76px;height:76px}
+.node.locked button svg{filter:grayscale(1);opacity:.55}
+/* 상점 */
+.stat.coin{border:0;background:none;padding:0;color:#B57F00;font:inherit;font-weight:700}
+.stat.coin svg{width:20px;height:20px}
+.shop-link{margin-top:12px;width:100%;display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:16px;border:2px solid var(--line);border-bottom-width:4px;background:var(--surface);text-align:left}
+.shop-link .mas{width:44px;height:44px}
+.shop-link b{font-family:var(--display);font-weight:400;font-size:18px;display:block}
+.shop-link small{color:var(--muted)}
+.shop-link .go{margin-left:auto;font-family:var(--display);font-size:22px}
+.shop-head{margin-top:8px;display:flex;align-items:center;gap:14px}
+.shop-head h2{font-size:28px}
+.shop-head p{margin:2px 0 0;color:var(--muted)}
+.potion{margin-top:16px;display:flex;align-items:center;gap:12px;padding:14px;border-radius:16px;background:var(--surface);border:2px solid var(--line)}
+.potion svg{width:40px;height:40px;flex:none}
+.potion div{flex:1;min-width:0}
+.potion b{display:block}
+.potion small{color:var(--muted)}
+.shop-sec{margin-top:20px;font-size:20px}
+.shop-grid{margin-top:10px;display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+.item{display:grid;justify-items:center;gap:6px;padding:12px 8px;border-radius:16px;background:var(--surface);border:2px solid var(--line);text-align:center}
+.item.on{border-color:var(--accent)}
+.item .mas{width:64px;height:64px}
+.ibtn{padding:8px 12px;border-radius:12px;border:0;background:var(--accent);color:var(--on-accent);font-weight:700;box-shadow:0 3px 0 var(--accent-deep);white-space:nowrap}
+.item.on .ibtn{background:var(--surface);color:var(--accent);box-shadow:none;border:2px solid var(--accent)}
+.btn.gold{background:var(--gold);color:#3A2600;box-shadow:0 4px 0 var(--gold-deep)}
+@media (prefers-color-scheme: dark){ .stat.coin{color:var(--gold)} }
 /* 새 문제 종류 */
 .eq{display:block;font-size:22px;color:var(--accent);margin-top:4px}
 .opts.ox .opt{padding:18px 12px}
@@ -226,6 +282,7 @@ h1,h2,h3{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance;l
       <span class="stat fire" title="연속 학습일"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 4-3 5-3 9a3 3 0 0 0 6 0c0-1-.5-2-1-3 3 1 5 4 5 7a7 7 0 0 1-14 0c0-6 6-8 7-13z"/></svg><b id="streak">0</b></span>
       <span class="stat xp" title="경험치"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg><b id="xp">0</b></span>
       <span class="stat lv" id="lv" title="레벨">Lv.1</span>
+      <button class="stat coin" id="coinBtn" title="상점"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#FFC23D" stroke="#B57F00" stroke-width="2"/><path d="M12 6v12M9 9h4.5a2 2 0 0 1 0 4h-3a2 2 0 0 0 0 4H15" stroke="#8A5A00" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg><b id="coinN">0</b></button>
     </div>
   </header>
 
@@ -235,6 +292,7 @@ h1,h2,h3{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance;l
       <div class="hero-row"><div class="mas big" id="homeMas"></div><div><h1>오늘은 어떤 말을 배울까요?</h1><button class="daily" id="daily"></button></div></div>
     </section>
     <section class="goal" id="goal"></section>
+    <button class="shop-link" id="shopLink"><span class="mas" id="shopLinkMas"></span><span><b>말랑이 상점</b><small>코인으로 모자, 색깔, 부활 물약을 사요</small></span><span class="go">→</span></button>
     <div id="cont"></div>
     <section class="passport"><h3>내 여권</h3><div class="stamps" id="stamps"></div></section>
     <p class="notice" id="notice"></p>
@@ -270,7 +328,21 @@ h1,h2,h3{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance;l
       <span class="stat time" id="timer" hidden>60초</span>
       <span class="stat heart" id="heartStat" title="하트"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-8-5.2-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.8-8 11-8 11z"/></svg><b id="hearts">5</b></span>
     </div>
+    <div class="arena" id="arena">
+      <div class="fighter me"><div class="mas" id="mas"></div><div class="hpbar"><i id="myHp"></i></div><span class="fname">말랑이</span></div>
+      <span class="vs">VS</span>
+      <div class="fighter foe"><div class="monster" id="foe"></div><div class="hpbar"><i id="foeHp"></i></div><span class="fname" id="foeName"></span></div>
+    </div>
     <div id="qbox"></div>
+  </main>
+
+  <!-- 상점 -->
+  <main id="shop" hidden>
+    <button class="back" id="shopBack">← 홈으로</button>
+    <div class="shop-head"><div class="mas big" id="shopMas"></div><div><h2>말랑이 상점</h2><p>가진 코인 <b id="shopCoins">0</b>개 · 몬스터를 물리치면 코인이 생겨요</p></div></div>
+    <section class="potion"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M15 4h10v8l8 12a9 9 0 0 1-8 13H15a9 9 0 0 1-8-13l8-12z" fill="#FF6B8A" stroke="#B3324F" stroke-width="2"/><rect x="13" y="2" width="14" height="5" rx="2" fill="#8D6E63"/><circle cx="16" cy="26" r="2.5" fill="#fff" opacity=".7"/></svg><div><b>부활 물약</b><small>하트를 다 써도 하트 3개로 이어서 싸워요 · 가진 개수 <span id="potionN">0</span>개</small></div><button class="ibtn" id="buyPotion">25 코인</button></section>
+    <h3 class="shop-sec">모자와 색깔</h3>
+    <div class="shop-grid" id="shopGrid"></div>
   </main>
 
   <!-- 결과 -->
@@ -462,17 +534,17 @@ const SPK = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 9h4l5-4v14
 
 // 저장
 const KEY = "malmoi-v1";
-function load() { try { return Object.assign({ xp: 0, streak: 0, last: "", done: {}, recent: "", today: { d: "", xp: 0 }, stamps: {}, best: {} }, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch (e) { return { xp: 0, streak: 0, last: "", done: {}, recent: "", today: { d: "", xp: 0 }, stamps: {}, best: {} }; } }
+function load() { try { return Object.assign({ xp: 0, streak: 0, last: "", done: {}, recent: "", today: { d: "", xp: 0 }, stamps: {}, best: {}, coins: 0, owned: [], wear: { hat: "", color: "gold" }, potions: 0 }, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch (e) { return { xp: 0, streak: 0, last: "", done: {}, recent: "", today: { d: "", xp: 0 }, stamps: {}, best: {}, coins: 0, owned: [], wear: { hat: "", color: "gold" }, potions: 0 }; } }
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
 let S = load();
 const dayStr = d => d.toISOString().slice(0, 10);
 
 function show(id) {
-  ["home", "course", "lesson", "result"].forEach(x => $("#" + x).hidden = x !== id);
+  ["home", "course", "lesson", "result", "shop"].forEach(x => $("#" + x).hidden = x !== id);
   $("#foot").hidden = id !== "lesson";
   window.scrollTo(0, 0);
 }
-function stats() { $("#xp").textContent = S.xp; $("#streak").textContent = S.streak; $("#lv").textContent = "Lv." + level(); }
+function stats() { $("#xp").textContent = S.xp; $("#streak").textContent = S.streak; $("#lv").textContent = "Lv." + level(); $("#coinN").textContent = S.coins; }
 
 // 레벨, 오늘 목표
 const LV_XP = 50, GOAL = 30;
@@ -489,7 +561,16 @@ function addXP(n) {
 }
 
 // 말풍선 캐릭터 "말랑이"
-function mascot(m) {
+const SKIN = { gold: "#F2A900", mint: "#4FCFAE", pink: "#FF9EC4", sky: "#7CC4FF", grape: "#B49CFF" };
+const HATS = {
+  party: '<path d="M20 7 28-12 36 7Z" fill="#FF6B9A" stroke="rgba(0,0,0,.25)"/><path d="M24 -2l8 4M22 3l10 3" stroke="#FFE066" stroke-width="2"/><circle cx="28" cy="-12" r="3" fill="#FFE066"/>',
+  straw: '<ellipse cx="28" cy="6" rx="22" ry="4" fill="#E9C46A" stroke="rgba(0,0,0,.2)"/><path d="M17 6q0-14 11-14t11 14z" fill="#F4D58D" stroke="rgba(0,0,0,.2)"/><rect x="17" y="1" width="22" height="3.5" fill="#E76F51"/>',
+  pirate: '<path d="M7 7q21-28 42 0z" fill="#26262E"/><circle cx="28" cy="-1" r="3.2" fill="#fff"/><path d="M25 3l6 0" stroke="#fff" stroke-width="1.6"/>',
+  crown: '<path d="M15 7 17-8 22 0 28-11 34 0 39-8 41 7Z" fill="#FFD43B" stroke="#B8860B" stroke-width="1.5"/><circle cx="28" cy="2" r="2.2" fill="#E0506E"/><circle cx="20" cy="3" r="1.6" fill="#5BB0E0"/><circle cx="36" cy="3" r="1.6" fill="#5BB0E0"/>',
+  wizard: '<path d="M13 7 31-14 43 7Z" fill="#5B4BDB" stroke="rgba(0,0,0,.25)"/><ellipse cx="28" cy="7" rx="19" ry="3.2" fill="#4537B8"/><path d="M28-2l1 2 2 .3-1.5 1.4.4 2.1-1.9-1-1.9 1 .4-2.1L25 .3l2-.3z" fill="#FFE066"/>'
+};
+function mascot(m, w) {
+  w = w || S.wear || {};
   const ink = "#18213A";
   const eyes = m === "happy"
     ? `<path d="M16 25q4-5 8 0M32 25q4-5 8 0" stroke="${ink}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`
@@ -498,7 +579,7 @@ function mascot(m) {
     : m === "sad" ? `<path d="M22 35q6-5 12 0" stroke="${ink}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`
     : `<path d="M22 31q6 5 12 0" stroke="${ink}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`;
   const tear = m === "sad" ? `<path d="M40 28q-2 4 0 5q2-1 0-5z" fill="#6FB6FF"/>` : "";
-  return `<svg viewBox="0 0 56 56" role="img" aria-label="말랑이"><path d="M9 5h38a7 7 0 0 1 7 7v25a7 7 0 0 1-7 7H25l-11 9v-9H9a7 7 0 0 1-7-7V12a7 7 0 0 1 7-7z" fill="var(--gold)" stroke="var(--gold-deep)" stroke-width="1.5"/>${eyes}<circle cx="13" cy="30" r="3.2" fill="#F28B6B" opacity=".55"/><circle cx="43" cy="30" r="3.2" fill="#F28B6B" opacity=".55"/>${mouth}${tear}</svg>`;
+  return `<svg viewBox="0 -14 56 70" role="img" aria-label="말랑이"><path d="M9 5h38a7 7 0 0 1 7 7v25a7 7 0 0 1-7 7H25l-11 9v-9H9a7 7 0 0 1-7-7V12a7 7 0 0 1 7-7z" fill="${SKIN[w.color] || SKIN.gold}" stroke="rgba(0,0,0,.25)" stroke-width="1.5"/>${eyes}<circle cx="13" cy="30" r="3.2" fill="#F28B6B" opacity=".55"/><circle cx="43" cy="30" r="3.2" fill="#F28B6B" opacity=".55"/>${mouth}${tear}${HATS[w.hat] || ""}</svg>`;
 }
 function stampHtml(n) {
   const d = (S.stamps[n] || dayStr(new Date())).replace(/-/g, ".");
@@ -506,6 +587,7 @@ function stampHtml(n) {
 }
 function renderFun() {
   $("#homeMas").innerHTML = mascot("idle");
+  $("#shopLinkMas").innerHTML = mascot("happy");
   // 날짜마다 다른 언어의 인사말
   const d = dayStr(new Date()); let hsh = 7;
   for (const c of d) hsh = (hsh * 31 + c.charCodeAt(0)) % 99991;
@@ -522,12 +604,118 @@ function renderFun() {
     : `<p class="empty-s">한 언어의 5단원을 모두 끝내면 여기에 그 나라 도장이 찍혀요.</p>`;
 }
 
+// 몬스터
+const FOES = ["인사 슬라임", "대답 박쥐", "숫자 골렘", "생활 유령", "단어 대왕"];
+function monster(i, mood) {
+  const c = i < 0 ? "#E8B730" : ["#6CC46A", "#9B7BEA", "#E0864F", "#5BB0E0", "#E0506E"][i % 5];
+  const ink = "#18213A", line = 'stroke="rgba(0,0,0,.28)" stroke-width="1.5"';
+  const wings = i === 1 ? `<path d="M10 30Q-2 20 2 40Q6 33 10 37Z M46 30Q58 20 54 40Q50 33 46 37Z" fill="${c}" ${line}/>` : "";
+  const horns = i >= 2 || i < 0 ? `<path d="M17 22 13 7 23 17Z M39 22 43 7 33 17Z" fill="#FFF7E0" ${line}/>` : "";
+  const crown = i === 4 ? '<path d="M18 15V3l5 6 5-8 5 8 5-6v12Z" fill="#FFD43B" stroke="#B8860B" stroke-width="1.4"/>' : "";
+  const body = i === 2
+    ? `<rect x="9" y="16" width="38" height="34" rx="8" fill="${c}" ${line}/><path d="M14 24h6M36 44h6M30 20v4" stroke="rgba(0,0,0,.2)" stroke-width="2"/>`
+    : `<path d="M8 50Q4 22 28 15Q52 22 48 50Q43 46 38 50Q33 46 28 50Q23 46 18 50Q13 46 8 50Z" fill="${c}" ${line}/>`;
+  const eyes = mood === "ko" ? `<path d="M18 26l6 6M24 26l-6 6M32 26l6 6M38 26l-6 6" stroke="${ink}" stroke-width="2.5" stroke-linecap="round"/>`
+    : mood === "hurt" ? `<path d="M18 27l6 2.5-6 2.5M38 27l-6 2.5 6 2.5" stroke="${ink}" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`
+    : `<circle cx="21" cy="30" r="4" fill="#fff"/><circle cx="35" cy="30" r="4" fill="#fff"/><circle cx="22" cy="30.5" r="2" fill="${ink}"/><circle cx="34" cy="30.5" r="2" fill="${ink}"/><path d="M16 23l9 4M40 23l-9 4" stroke="${ink}" stroke-width="2.5" stroke-linecap="round"/>`;
+  const mouth = mood === "ko" ? `<path d="M22 42q6-4 12 0" stroke="${ink}" stroke-width="2.5" fill="none" stroke-linecap="round"/>`
+    : mood === "hurt" ? `<ellipse cx="28" cy="41" rx="4" ry="3.2" fill="${ink}"/>`
+    : `<path d="M20 39l3 3 2.5-3 2.5 3 2.5-3 2.5 3 3-3" stroke="${ink}" stroke-width="2" fill="none" stroke-linejoin="round"/>`;
+  return `<svg viewBox="0 0 56 56" role="img" aria-label="${i < 0 ? "시간 도깨비" : FOES[i]}">${wings}${horns}${body}${crown}${eyes}${mouth}</svg>`;
+}
+function setupArena(i) {
+  LS.foe = i; LS.hits = 0;
+  $("#foeName").textContent = i < 0 ? "시간 도깨비" : FOES[i];
+  const f = $("#foe"); f.className = "monster" + (i === LESSONS.length - 1 ? " boss" : ""); f.innerHTML = monster(i, "idle");
+  $("#mas").innerHTML = mascot("idle");
+  updateArena();
+}
+function updateArena() {
+  $("#myHp").style.width = (LS.mode === "blitz" ? 100 : Math.max(0, LS.hearts) / 5 * 100) + "%";
+  if (LS.mode !== "blitz") $("#foeHp").style.width = Math.max(0, 1 - LS.hits / LS.first) * 100 + "%";
+}
+function anim(el, c) { el.classList.remove("hop", "shake", "attack", "hurt", "lunge", "down"); void el.offsetWidth; el.classList.add(c); }
+function popNum(el, text, good) {
+  const s = document.createElement("span"); s.className = "pop-num" + (good ? " good" : ""); s.textContent = text;
+  el.parentElement.appendChild(s); setTimeout(() => s.remove(), 900);
+}
+function battle(ok) {
+  const foe = $("#foe"), me = $("#mas");
+  if (ok) {
+    LS.hits++;
+    anim(me, "attack");
+    foe.innerHTML = monster(LS.foe, "hurt"); anim(foe, "hurt");
+    popNum(foe, LS.mode === "blitz" ? "+1점" : "-" + (10 + Math.min(LS.combo, 5) * 2));
+    const dead = LS.mode !== "blitz" && LS.hits >= LS.first;
+    setTimeout(() => { foe.innerHTML = monster(LS.foe, dead ? "ko" : "idle"); if (dead) anim(foe, "down"); }, 450);
+  } else {
+    anim(foe, "lunge"); anim(me, "shake");
+    popNum(me, LS.mode === "blitz" ? "-3초" : "-1 하트");
+  }
+  updateArena();
+}
+
+// 코인, 상점
+const POTION = 25;
+const SHOP = [
+  { id: "h:party", name: "파티 모자", price: 30 }, { id: "h:straw", name: "밀짚모자", price: 40 },
+  { id: "h:pirate", name: "해적 모자", price: 50 }, { id: "h:crown", name: "왕관", price: 80 },
+  { id: "h:wizard", name: "마법사 모자", price: 100 },
+  { id: "c:gold", name: "기본 노랑", price: 0 }, { id: "c:mint", name: "민트", price: 30 },
+  { id: "c:pink", name: "분홍", price: 30 }, { id: "c:sky", name: "하늘", price: 30 }, { id: "c:grape", name: "포도", price: 40 }
+];
+function openShop() { renderShop(); show("shop"); }
+function renderShop() {
+  stats();
+  $("#shopMas").innerHTML = mascot("happy");
+  $("#shopCoins").textContent = S.coins;
+  $("#potionN").textContent = S.potions;
+  $("#shopGrid").innerHTML = SHOP.map(it => {
+    const [k, v] = it.id.split(":"), own = !it.price || S.owned.includes(it.id);
+    const on = k === "h" ? S.wear.hat === v : S.wear.color === v;
+    const look = k === "h" ? { hat: v, color: S.wear.color } : { hat: "", color: v };
+    const label = on ? (k === "h" ? "벗기" : "쓰는 중") : own ? (k === "h" ? "쓰기" : "바꾸기") : it.price + " 코인";
+    return `<div class="item${on ? " on" : ""}"><div class="mas">${mascot("idle", look)}</div><b>${it.name}</b><button class="ibtn" data-id="${it.id}">${label}</button></div>`;
+  }).join("");
+}
+$("#shopGrid").addEventListener("click", e => {
+  const b = e.target.closest(".ibtn"); if (!b) return;
+  const it = SHOP.find(x => x.id === b.dataset.id), [k, v] = it.id.split(":"), own = !it.price || S.owned.includes(it.id);
+  if (!own) {
+    if (S.coins < it.price) { toast(`코인이 ${it.price - S.coins}개 모자라요. 몬스터를 물리쳐서 모아 보세요.`); return; }
+    S.coins -= it.price; S.owned.push(it.id); toast(`${it.name} 샀어요!`); confetti();
+  }
+  if (k === "h") S.wear.hat = own && S.wear.hat === v ? "" : v; else S.wear.color = v;
+  save(); renderShop();
+});
+$("#buyPotion").onclick = () => {
+  if (S.coins < POTION) { toast(`코인이 ${POTION - S.coins}개 모자라요.`); return; }
+  S.coins -= POTION; S.potions++; save(); renderShop(); toast("부활 물약을 샀어요!");
+};
+$("#shopBack").onclick = () => { renderHome(); show("home"); };
+$("#shopLink").onclick = openShop;
+$("#coinBtn").onclick = () => { if ($("#lesson").hidden) openShop(); };
+function reviveBtn() {
+  if (S.potions > 0) return `<button class="btn gold" id="revive">부활 물약 쓰기 (${S.potions}개 있음)</button>`;
+  if (S.coins >= POTION) return `<button class="btn gold" id="revive">물약 사서 부활하기 (${POTION} 코인)</button>`;
+  return "";
+}
+function revive() {
+  if (S.potions > 0) S.potions--; else if (S.coins >= POTION) S.coins -= POTION; else return;
+  save(); stats();
+  LS.hearts = 3; show("lesson"); setMode(); updateArena();
+  $("#mas").innerHTML = mascot("happy"); anim($("#mas"), "hop");
+  toast("부활했어요! 하트 3개로 다시 싸워요.");
+  LS.pos++;
+  if (LS.pos >= LS.qs.length) return finish(true);
+  renderQ();
+}
+
 // 레슨 꾸미기: 캐릭터, 콤보
 function decorate() {
   const box = $("#qbox"), t = box.querySelector(".qtitle");
-  const c = document.createElement("div"); c.className = "coach";
-  c.innerHTML = `<div class="mas" id="mas">${mascot("idle")}</div>`;
-  t.replaceWith(c); c.appendChild(t);
+  t.classList.add("bubble");
+  if (!$("#foe").classList.contains("down")) $("#mas").innerHTML = mascot("idle");
   if (LS.mode === "blitz") $("#action").textContent = "빠르게 골라요!";
   comboPill();
 }
@@ -535,6 +723,7 @@ function comboPill() { const p = $("#combo"); p.hidden = LS.combo < 2; p.textCon
 function react(ok) {
   const m = $("#mas");
   if (m) { m.innerHTML = mascot(ok ? "happy" : "sad"); m.classList.remove("hop", "shake"); void m.offsetWidth; m.classList.add(ok ? "hop" : "shake"); }
+  battle(ok);
   comboPill();
   if (ok && LS.combo >= 3) {
     $("#fb").insertAdjacentHTML("beforeend", `<span class="combo-msg">${LS.combo}연속 정답!${LS.mode === "blitz" ? "" : " 보너스 +1 XP"}</span>`);
@@ -547,7 +736,7 @@ function setMode() { const b = LS.mode === "blitz"; $("#heartStat").hidden = b; 
 let blitzT = null;
 function startBlitz() {
   LS = { mode: "blitz", qs: [], pos: -1, hearts: 99, right: 0, wrong: 0, combo: 0, bonus: 0, sel: null, state: "ask", end: Date.now() + 60000 };
-  show("lesson"); setMode();
+  show("lesson"); setMode(); setupArena(-1);
   clearInterval(blitzT); blitzT = setInterval(tick, 200);
   nextBlitz(); tick();
 }
@@ -557,6 +746,7 @@ function tick() {
   $("#timer").textContent = Math.ceil(left / 1000) + "초";
   $("#timer").classList.toggle("low", left < 10000);
   $("#prog").style.width = (left / 60000 * 100) + "%";
+  $("#foeHp").style.width = (left / 60000 * 100) + "%";
   if (!left && LS.state === "ask") finishBlitz();
 }
 function nextBlitz() {
@@ -574,7 +764,8 @@ function finishBlitz() {
   const score = LS.right, prev = S.best[cur] || 0, rec = score > prev;
   if (rec) S.best[cur] = score;
   const lvUp = addXP(score);
-  $("#rbox").innerHTML = `<div class="mas big">${mascot(score ? "happy" : "sad")}</div><h2>${rec ? "새 기록!" : "시간 끝!"}</h2><p>${esc(cur)} 번개 퀴즈에서 ${score}개를 맞혔어요.</p>
+  S.coins += score; save(); stats();
+  $("#rbox").innerHTML = `<div class="mas big">${mascot(score ? "happy" : "sad")}</div><h2>${rec ? "새 기록!" : "시간 끝!"}</h2><p>${esc(cur)} 번개 퀴즈에서 ${score}개를 맞혔어요. 코인도 ${score}개 얻었어요.</p>
     <div class="tiles"><div class="tile"><b>${score}</b><span>맞힌 개수</span></div><div class="tile"><b>${Math.max(score, prev)}</b><span>최고 기록</span></div><div class="tile"><b>+${score}</b><span>경험치</span></div></div>
     ${lvUp ? `<p class="lvup">레벨 업! 이제 Lv.${level()}</p>` : ""}
     <button class="btn" id="again">다시 도전</button><button class="btn ghost" id="toC">단원 목록으로</button>`;
@@ -703,7 +894,7 @@ function openCourse(n) {
   const off = [0, 64, 0, -64, 0];
   $("#path").innerHTML = LESSONS.map((l, i) => {
     const st = i < d ? "done" : i === d ? "current" : "locked";
-    return `<div class="node ${st}" style="transform:translateX(${off[i]}px)"><button data-i="${i}" aria-label="${i + 1}단원 ${l.t}">${i < d ? "✓" : i + 1}</button><span class="lbl">${l.t}<small>${l.d}</small></span></div>`;
+    return `<div class="node ${st}${i === LESSONS.length - 1 ? " boss" : ""}" style="transform:translateX(${off[i]}px)"><button data-i="${i}" aria-label="${i + 1}단원 ${l.t}">${i < d ? "✓" : monster(i, "idle")}</button><span class="lbl">${i + 1}. ${l.t}<small>${FOES[i]}${i === LESSONS.length - 1 ? " · 보스" : ""}</small></span></div>`;
   }).join("");
   const ws = words(n), code = L[n][0];
   $("#wlist").innerHTML = ws.map((w, i) => `<div class="wrow"><span class="ko">${KO[i]}</span><span class="fw" dir="auto">${esc(w.w)}${w.r ? `<small>${esc(w.r)}</small>` : ""}</span><button class="spk" data-say="${i}" aria-label="${KO[i]} 듣기">${SPK}</button></div>`).join("");
@@ -734,7 +925,7 @@ function startLesson(i) {
   const mk = shuffle(ws).slice(0, 4).concat(extra).slice(0, 4);
   qs.splice(Math.min(3, qs.length), 0, { type: "match", keys: mk });
   LS = { mode: "lesson", i, qs, pos: 0, hearts: 5, first: qs.length, right: 0, wrong: 0, combo: 0, bonus: 0, sel: null, state: "ask" };
-  show("lesson"); setMode();
+  show("lesson"); setMode(); setupArena(i);
   renderQ();
 }
 function optsFor(k) { return shuffle([k, ...shuffle(KO.map((_, j) => j).filter(j => j !== k)).slice(0, 3)]); }
@@ -896,13 +1087,16 @@ function finish(ok) {
   $("#prog").style.width = "100%";
   const r = $("#rbox");
   if (!ok) {
-    r.innerHTML = `<div class="mas big">${mascot("sad")}</div><h2>하트를 다 썼어요</h2><p>괜찮아요. 단어장을 한 번 보고 다시 해 봐요.</p>
+    r.innerHTML = `<div class="mas big">${mascot("sad")}</div><h2>${LS.foe >= 0 ? FOES[LS.foe] : "몬스터"}에게 졌어요</h2><p>괜찮아요. 물약으로 부활하거나 단어장을 보고 다시 도전해요.</p>
+      ${reviveBtn()}
       <button class="btn" id="retry">다시 하기</button><button class="btn ghost" id="toC">단원 목록으로</button>`;
   } else {
     const total = LS.right + LS.wrong;
     const acc = total ? Math.round(LS.right / total * 100) : 100;
     const gain = 10 + (LS.wrong === 0 ? 5 : 0) + LS.bonus;
     const lvUp = addXP(gain);
+    const coins = 5 + (LS.wrong === 0 ? 5 : 0) + LS.bonus + (LS.i === LESSONS.length - 1 ? 20 : 0);
+    S.coins += coins;
     S.done[cur] = Math.max(S.done[cur] || 0, LS.i + 1);
     const today = dayStr(new Date()), yest = dayStr(new Date(Date.now() - 864e5));
     if (S.last !== today) { S.streak = S.last === yest ? S.streak + 1 : 1; S.last = today; }
@@ -910,9 +1104,9 @@ function finish(ok) {
     if (newStamp) S.stamps[cur] = dayStr(new Date());
     save(); stats();
     const all = S.done[cur] >= LESSONS.length;
-    r.innerHTML = `<div class="medal">${LS.i + 1}</div><h2>${LESSONS[LS.i].t} 단원 완료!</h2>
+    r.innerHTML = `<div class="ko-wrap">${monster(LS.i, "ko")}<span class="ko-tag">K.O.</span></div><h2>${FOES[LS.i]} 격파!</h2>
       <p>${all ? `${cur} 기초 단어 ${KO.length}개를 모두 배웠어요.` : `다음은 ${LESSONS[Math.min(LS.i + 1, LESSONS.length - 1)].t} 단원이에요.`}</p>
-      <div class="tiles"><div class="tile"><b>+${gain}</b><span>경험치</span></div><div class="tile"><b>${acc}%</b><span>정확도</span></div><div class="tile"><b>${S.streak}일</b><span>연속 학습</span></div></div>
+      <div class="tiles"><div class="tile"><b>+${gain}</b><span>경험치</span></div><div class="tile"><b>${acc}%</b><span>정확도</span></div><div class="tile"><b>+${coins}</b><span>코인</span></div></div>
       ${lvUp ? `<p class="lvup">레벨 업! 이제 Lv.${level()}</p>` : ""}
       ${newStamp ? `<div class="stamp new">${stampHtml(cur)}</div><p>${esc(cur)} 여권 도장을 받았어요!</p>` : ""}
       <button class="btn" id="toC">계속하기</button>`;
@@ -921,6 +1115,7 @@ function finish(ok) {
   if (ok) confetti();
   const toC = $("#toC"); if (toC) toC.onclick = () => openCourse(cur);
   const re = $("#retry"); if (re) re.onclick = () => startLesson(LS.i);
+  const rv = $("#revive"); if (rv) rv.onclick = revive;
 }
 
 try { speechSynthesis.getVoices(); } catch (e) {}
