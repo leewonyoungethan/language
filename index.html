@@ -145,6 +145,54 @@ h1,h2,h3{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance;l
 .tile span{font-size:12px;color:var(--muted);letter-spacing:.04em}
 
 .toast{position:fixed;left:50%;top:calc(12px + env(safe-area-inset-top,0px));transform:translateX(-50%);max-width:min(92vw,460px);background:var(--ink);color:var(--bg);padding:12px 16px;border-radius:14px;font-size:14px;z-index:20}
+/* 재미 요소 */
+#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:30}
+.stat.lv{color:var(--good)}
+.mas{width:56px;height:56px;flex:none}
+.mas.big{width:96px;height:96px}
+.mas svg{width:100%;height:100%;display:block}
+.mas.hop{animation:hop .5s}
+.mas.shake{animation:shake .35s}
+@keyframes hop{30%{transform:translateY(-12px) rotate(-6deg)}60%{transform:translateY(0) rotate(4deg)}}
+.hero-row{display:flex;align-items:center;gap:14px}
+.hero-row .mas{animation:bob 2.4s ease-in-out infinite}
+.daily{margin-top:6px;border:0;background:none;padding:0;color:var(--muted);text-align:left;display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.daily b{color:var(--ink);font-size:16px}
+.daily span{font-size:12px;padding:2px 8px;border-radius:999px;background:var(--surface);border:1px solid var(--line)}
+.goal{margin-top:16px;display:grid;grid-template-columns:auto 1fr 1fr;gap:14px;align-items:center;padding:14px;border-radius:16px;background:var(--surface);border:2px solid var(--line)}
+.ring{width:56px;height:56px;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:7}
+.ring .trk{stroke:var(--line)}
+.ring .val{stroke:var(--gold);stroke-linecap:round;transition:stroke-dashoffset .6s}
+.goal-t{display:grid;gap:2px;min-width:0}
+.goal-t b{font-family:var(--display);font-weight:400;font-size:18px}
+.goal-t span{font-size:13px;color:var(--muted)}
+.lvbar{height:6px;border-radius:6px;background:var(--line);overflow:hidden;display:block}
+.lvbar i{display:block;height:100%;background:var(--good)}
+.passport{margin-top:18px}
+.passport h3{font-size:20px}
+.stamps{display:flex;gap:14px;overflow-x:auto;padding:12px 4px 8px}
+.stamp{flex:none;width:96px;height:96px;border-radius:50%;border:4px double var(--bad);color:var(--bad);display:grid;place-content:center;text-align:center;gap:1px;transform:rotate(var(--r,-6deg));font-size:11px;line-height:1.2;padding:8px}
+.stamp .st-name{font-family:var(--display);font-size:14px}
+.stamp .st-word{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:70px}
+.stamp.new{width:124px;height:124px;font-size:13px;animation:thump .5s}
+@keyframes thump{0%{transform:scale(2.2) rotate(-14deg);opacity:0}70%{transform:scale(.95) rotate(-6deg);opacity:1}100%{transform:scale(1) rotate(-6deg)}}
+.empty-s{color:var(--muted);font-size:14px;margin:0}
+.blitz{margin-top:6px;width:100%;display:flex;align-items:center;gap:12px;padding:14px;border-radius:16px;border:2px solid var(--gold-deep);border-bottom-width:4px;background:color-mix(in srgb,var(--gold) 18%,var(--surface));text-align:left}
+.blitz svg{width:30px;height:30px;color:var(--gold-deep);flex:none}
+.blitz b{font-family:var(--display);font-weight:400;font-size:19px;display:block}
+.blitz small{color:var(--muted)}
+.blitz .go{margin-left:auto;font-family:var(--display);font-size:22px}
+.coach{display:flex;align-items:center;gap:12px;margin-top:22px}
+.coach .qtitle{margin-top:0;padding:10px 14px;border-radius:14px;background:var(--surface);border:2px solid var(--line);font-size:20px}
+.combo{font-family:var(--display);color:var(--gold-deep);font-size:16px;white-space:nowrap}
+.combo.pop{animation:pop .4s}
+@keyframes pop{50%{transform:scale(1.5)}}
+.combo-msg{display:inline-block;margin-top:4px;padding:2px 10px;border-radius:999px;background:var(--gold);color:#3A2600;font-family:var(--body);font-size:13px;font-weight:700}
+.stat.time{color:var(--accent)}
+.stat.time.low{color:var(--bad);animation:pop .5s infinite}
+.result .lvup{font-family:var(--display);font-size:22px;color:var(--good)}
+@media (prefers-color-scheme: dark){ .combo,.blitz svg{color:var(--gold)} }
 @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
 @media (max-width:380px){.opts{grid-template-columns:1fr}}
 </style>
@@ -156,16 +204,18 @@ h1,h2,h3{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance;l
     <div class="stats">
       <span class="stat fire" title="연속 학습일"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 4-3 5-3 9a3 3 0 0 0 6 0c0-1-.5-2-1-3 3 1 5 4 5 7a7 7 0 0 1-14 0c0-6 6-8 7-13z"/></svg><b id="streak">0</b></span>
       <span class="stat xp" title="경험치"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg><b id="xp">0</b></span>
+      <span class="stat lv" id="lv" title="레벨">Lv.1</span>
     </div>
   </header>
 
   <!-- 홈 -->
   <main id="home">
     <section class="hero">
-      <h1>오늘은 어떤 말을 배울까요?</h1>
-      <p>하루 5분, 인사부터 숫자까지 차근차근 배워요.</p>
+      <div class="hero-row"><div class="mas big" id="homeMas"></div><div><h1>오늘은 어떤 말을 배울까요?</h1><button class="daily" id="daily"></button></div></div>
     </section>
+    <section class="goal" id="goal"></section>
     <div id="cont"></div>
+    <section class="passport"><h3>내 여권</h3><div class="stamps" id="stamps"></div></section>
     <p class="notice" id="notice"></p>
     <input id="search" class="search" type="search" placeholder="언어 이름으로 찾기 (예: 스와힐리어)" autocomplete="off">
     <div class="chips" role="group" aria-label="보기">
@@ -183,6 +233,7 @@ h1,h2,h3{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance;l
       <p id="cInfo"></p>
     </div>
     <div class="path" id="path"></div>
+    <button class="blitz" id="blitzBtn"></button>
     <section class="words">
       <h3>단어장</h3>
       <div id="wlist"></div>
@@ -194,7 +245,9 @@ h1,h2,h3{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance;l
     <div class="lhead">
       <button class="x" id="quit" aria-label="레슨 그만하기">✕</button>
       <div class="progress"><i id="prog"></i></div>
-      <span class="stat heart" title="하트"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-8-5.2-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.8-8 11-8 11z"/></svg><b id="hearts">5</b></span>
+      <span class="combo" id="combo" hidden></span>
+      <span class="stat time" id="timer" hidden>60초</span>
+      <span class="stat heart" id="heartStat" title="하트"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-8-5.2-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.8-8 11-8 11z"/></svg><b id="hearts">5</b></span>
     </div>
     <div id="qbox"></div>
   </main>
@@ -212,6 +265,7 @@ h1,h2,h3{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance;l
   </div>
 </footer>
 <div class="toast" id="toast" hidden></div>
+<canvas id="fx" aria-hidden="true"></canvas>
 
 <script>
 // 사용자가 준 언어 목록 전체
@@ -387,7 +441,7 @@ const SPK = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 9h4l5-4v14
 
 // 저장
 const KEY = "malmoi-v1";
-function load() { try { return Object.assign({ xp: 0, streak: 0, last: "", done: {}, recent: "" }, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch (e) { return { xp: 0, streak: 0, last: "", done: {}, recent: "" }; } }
+function load() { try { return Object.assign({ xp: 0, streak: 0, last: "", done: {}, recent: "", today: { d: "", xp: 0 }, stamps: {}, best: {} }, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch (e) { return { xp: 0, streak: 0, last: "", done: {}, recent: "", today: { d: "", xp: 0 }, stamps: {}, best: {} }; } }
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
 let S = load();
 const dayStr = d => d.toISOString().slice(0, 10);
@@ -397,7 +451,133 @@ function show(id) {
   $("#foot").hidden = id !== "lesson";
   window.scrollTo(0, 0);
 }
-function stats() { $("#xp").textContent = S.xp; $("#streak").textContent = S.streak; }
+function stats() { $("#xp").textContent = S.xp; $("#streak").textContent = S.streak; $("#lv").textContent = "Lv." + level(); }
+
+// 레벨, 오늘 목표
+const LV_XP = 50, GOAL = 30;
+const level = () => Math.floor(S.xp / LV_XP) + 1;
+const todayXP = () => S.today && S.today.d === dayStr(new Date()) ? S.today.xp : 0;
+function addXP(n) {
+  const before = level(), today = dayStr(new Date()), yest = dayStr(new Date(Date.now() - 864e5));
+  S.xp += n;
+  if (!S.today || S.today.d !== today) S.today = { d: today, xp: 0 };
+  S.today.xp += n;
+  if (n > 0 && S.last !== today) { S.streak = S.last === yest ? S.streak + 1 : 1; S.last = today; }
+  save(); stats();
+  return level() > before;
+}
+
+// 말풍선 캐릭터 "말랑이"
+function mascot(m) {
+  const ink = "#18213A";
+  const eyes = m === "happy"
+    ? `<path d="M16 25q4-5 8 0M32 25q4-5 8 0" stroke="${ink}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`
+    : `<circle cx="20" cy="24" r="3.4" fill="${ink}"/><circle cx="36" cy="24" r="3.4" fill="${ink}"/><circle cx="21.2" cy="22.8" r="1.1" fill="#fff"/><circle cx="37.2" cy="22.8" r="1.1" fill="#fff"/>`;
+  const mouth = m === "happy" ? `<path d="M21 31q7 9 14 0z" fill="${ink}"/>`
+    : m === "sad" ? `<path d="M22 35q6-5 12 0" stroke="${ink}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`
+    : `<path d="M22 31q6 5 12 0" stroke="${ink}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`;
+  const tear = m === "sad" ? `<path d="M40 28q-2 4 0 5q2-1 0-5z" fill="#6FB6FF"/>` : "";
+  return `<svg viewBox="0 0 56 56" role="img" aria-label="말랑이"><path d="M9 5h38a7 7 0 0 1 7 7v25a7 7 0 0 1-7 7H25l-11 9v-9H9a7 7 0 0 1-7-7V12a7 7 0 0 1 7-7z" fill="var(--gold)" stroke="var(--gold-deep)" stroke-width="1.5"/>${eyes}<circle cx="13" cy="30" r="3.2" fill="#F28B6B" opacity=".55"/><circle cx="43" cy="30" r="3.2" fill="#F28B6B" opacity=".55"/>${mouth}${tear}</svg>`;
+}
+function stampHtml(n) {
+  const d = (S.stamps[n] || dayStr(new Date())).replace(/-/g, ".");
+  return `<span class="st-name">${esc(n)}</span><span class="st-word" dir="auto">${esc(words(n)[0].w)}</span><span>${d}</span>`;
+}
+function renderFun() {
+  $("#homeMas").innerHTML = mascot("idle");
+  // 날짜마다 다른 언어의 인사말
+  const d = dayStr(new Date()); let hsh = 7;
+  for (const c of d) hsh = (hsh * 31 + c.charCodeAt(0)) % 99991;
+  const n = READY[hsh % READY.length], w = words(n)[0];
+  $("#daily").innerHTML = `오늘의 인사 <b dir="auto">${esc(w.w)}</b><span>${esc(n)}</span>`;
+  $("#daily").onclick = () => { speak(w.w, L[n][0]); openCourse(n); };
+  const t = todayXP(), pct = Math.min(1, t / GOAL), C = 2 * Math.PI * 22, into = S.xp % LV_XP;
+  $("#goal").innerHTML = `<svg viewBox="0 0 56 56" class="ring" aria-hidden="true"><circle cx="28" cy="28" r="22" class="trk"/><circle cx="28" cy="28" r="22" class="val" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - pct)}"/></svg>
+    <div class="goal-t"><b>${t >= GOAL ? "목표 달성!" : "오늘 목표"}</b><span>${Math.min(t, GOAL)} / ${GOAL} XP</span></div>
+    <div class="goal-t"><b>Lv.${level()}</b><span>다음 레벨까지 ${LV_XP - into} XP</span><span class="lvbar"><i style="width:${into / LV_XP * 100}%"></i></span></div>`;
+  const st = Object.keys(S.stamps);
+  $("#stamps").innerHTML = st.length
+    ? st.map((n, i) => `<div class="stamp" style="--r:${(i * 37 % 17) - 8}deg">${stampHtml(n)}</div>`).join("")
+    : `<p class="empty-s">한 언어의 5단원을 모두 끝내면 여기에 그 나라 도장이 찍혀요.</p>`;
+}
+
+// 레슨 꾸미기: 캐릭터, 콤보
+function decorate() {
+  const box = $("#qbox"), t = box.querySelector(".qtitle");
+  const c = document.createElement("div"); c.className = "coach";
+  c.innerHTML = `<div class="mas" id="mas">${mascot("idle")}</div>`;
+  t.replaceWith(c); c.appendChild(t);
+  if (LS.mode === "blitz") $("#action").textContent = "빠르게 골라요!";
+  comboPill();
+}
+function comboPill() { const p = $("#combo"); p.hidden = LS.combo < 2; p.textContent = LS.combo + "연속"; }
+function react(ok) {
+  const m = $("#mas");
+  if (m) { m.innerHTML = mascot(ok ? "happy" : "sad"); m.classList.remove("hop", "shake"); void m.offsetWidth; m.classList.add(ok ? "hop" : "shake"); }
+  comboPill();
+  if (ok && LS.combo >= 3) {
+    $("#fb").insertAdjacentHTML("beforeend", `<span class="combo-msg">${LS.combo}연속 정답!${LS.mode === "blitz" ? "" : " 보너스 +1 XP"}</span>`);
+    const p = $("#combo"); p.classList.remove("pop"); void p.offsetWidth; p.classList.add("pop");
+  }
+}
+function setMode() { const b = LS.mode === "blitz"; $("#heartStat").hidden = b; $("#timer").hidden = !b; }
+
+// 번개 퀴즈: 60초 동안 많이 맞히기
+let blitzT = null;
+function startBlitz() {
+  LS = { mode: "blitz", qs: [], pos: -1, hearts: 99, right: 0, wrong: 0, combo: 0, bonus: 0, sel: null, state: "ask", end: Date.now() + 60000 };
+  show("lesson"); setMode();
+  clearInterval(blitzT); blitzT = setInterval(tick, 200);
+  nextBlitz(); tick();
+}
+function tick() {
+  if (LS.mode !== "blitz" || LS.state === "over") return;
+  const left = Math.max(0, LS.end - Date.now());
+  $("#timer").textContent = Math.ceil(left / 1000) + "초";
+  $("#timer").classList.toggle("low", left < 10000);
+  $("#prog").style.width = (left / 60000 * 100) + "%";
+  if (!left && LS.state === "ask") finishBlitz();
+}
+function nextBlitz() {
+  if (LS.state === "over") return;
+  if (Date.now() >= LS.end) return finishBlitz();
+  const prev = LS.qs[LS.pos]; let k;
+  do { k = Math.floor(Math.random() * KO.length); } while (prev && prev.k === k);
+  LS.qs.push({ type: Math.random() < .5 ? "pick" : "rev", k });
+  LS.pos++;
+  renderQ();
+}
+function finishBlitz() {
+  if (LS.state === "over") return;
+  LS.state = "over"; clearInterval(blitzT);
+  const score = LS.right, prev = S.best[cur] || 0, rec = score > prev;
+  if (rec) S.best[cur] = score;
+  const lvUp = addXP(score);
+  $("#rbox").innerHTML = `<div class="mas big">${mascot(score ? "happy" : "sad")}</div><h2>${rec ? "새 기록!" : "시간 끝!"}</h2><p>${esc(cur)} 번개 퀴즈에서 ${score}개를 맞혔어요.</p>
+    <div class="tiles"><div class="tile"><b>${score}</b><span>맞힌 개수</span></div><div class="tile"><b>${Math.max(score, prev)}</b><span>최고 기록</span></div><div class="tile"><b>+${score}</b><span>경험치</span></div></div>
+    ${lvUp ? `<p class="lvup">레벨 업! 이제 Lv.${level()}</p>` : ""}
+    <button class="btn" id="again">다시 도전</button><button class="btn ghost" id="toC">단원 목록으로</button>`;
+  show("result");
+  if (rec || lvUp) confetti();
+  $("#again").onclick = startBlitz;
+  $("#toC").onclick = () => openCourse(cur);
+}
+
+// 꽃가루
+function confetti() {
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const c = $("#fx"), x = c.getContext("2d");
+  c.width = innerWidth; c.height = innerHeight;
+  const cs = getComputedStyle(document.documentElement);
+  const cols = ["--accent", "--gold", "--good", "--bad"].map(v => cs.getPropertyValue(v).trim());
+  const ps = Array.from({ length: 150 }, () => ({ x: innerWidth / 2 + (Math.random() - .5) * 160, y: innerHeight * .35, vx: (Math.random() - .5) * 15, vy: -Math.random() * 15 - 4, s: 6 + Math.random() * 6, r: Math.random() * 6, vr: (Math.random() - .5) * .4, c: cols[Math.floor(Math.random() * cols.length)] }));
+  const t0 = performance.now();
+  (function f(t) {
+    x.clearRect(0, 0, c.width, c.height);
+    ps.forEach(p => { p.vy += .35; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.r += p.vr; x.save(); x.translate(p.x, p.y); x.rotate(p.r); x.fillStyle = p.c; x.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2); x.restore(); });
+    if (t - t0 < 2800) requestAnimationFrame(f); else x.clearRect(0, 0, c.width, c.height);
+  })(t0);
+}
 let toastT;
 function toast(msg) { const t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, 2600); }
 
@@ -433,7 +613,7 @@ function beep(ok) {
 // 홈
 let filter = "ready";
 function renderHome() {
-  stats();
+  stats(); renderFun();
   $("#notice").innerHTML = `목록에 있는 <b>${ALL_NAMES.length}개 언어</b> 중 <b>${READY.length}개</b>를 지금 배울 수 있어요. 나머지는 단어를 정확히 확인한 다음에 열어요.`;
   $("#fReady").textContent = `지금 배우기 ${READY.length}`;
   $("#fAll").textContent = `전체 ${ALL_NAMES.length}`;
@@ -473,6 +653,7 @@ function openCourse(n) {
   const d = S.done[n] || 0;
   $("#cName").textContent = n;
   $("#cInfo").textContent = `${LESSONS.length}단원 중 ${Math.min(d, LESSONS.length)}단원 완료 · 단어 ${KO.length}개`;
+  $("#blitzBtn").innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg><span><b>번개 퀴즈</b><small>60초 동안 몇 개 맞힐까요? · 최고 기록 ${S.best[n] || 0}개</small></span><span class="go">→</span>`;
   const off = [0, 64, 0, -64, 0];
   $("#path").innerHTML = LESSONS.map((l, i) => {
     const st = i < d ? "done" : i === d ? "current" : "locked";
@@ -489,6 +670,7 @@ $("#path").addEventListener("click", e => {
   if (i > d) { toast(`먼저 ${d + 1}단원을 끝내야 열려요.`); return; }
   startLesson(i);
 });
+$("#blitzBtn").onclick = () => startBlitz();
 $("#toHome").onclick = () => { renderHome(); show("home"); };
 
 // 레슨
@@ -503,14 +685,14 @@ function startLesson(i) {
   const extra = shuffle(KO.map((_, k) => k).filter(k => !ws.includes(k)));
   const mk = shuffle(ws).slice(0, 4).concat(extra).slice(0, 4);
   qs.splice(Math.min(3, qs.length), 0, { type: "match", keys: mk });
-  LS = { i, qs, pos: 0, hearts: 5, first: qs.length, right: 0, wrong: 0, sel: null, state: "ask" };
-  show("lesson");
+  LS = { mode: "lesson", i, qs, pos: 0, hearts: 5, first: qs.length, right: 0, wrong: 0, combo: 0, bonus: 0, sel: null, state: "ask" };
+  show("lesson"); setMode();
   renderQ();
 }
 function optsFor(k) { return shuffle([k, ...shuffle(KO.map((_, j) => j).filter(j => j !== k)).slice(0, 3)]); }
 function renderQ() {
   const q = LS.qs[LS.pos], ws = words(cur), code = L[cur][0];
-  $("#prog").style.width = (LS.pos / LS.qs.length * 100) + "%";
+  if (LS.mode !== "blitz") $("#prog").style.width = (LS.pos / LS.qs.length * 100) + "%";
   $("#hearts").textContent = LS.hearts;
   LS.sel = null; LS.state = "ask";
   const foot = $("#foot"); foot.className = "foot"; $("#fb").hidden = true;
@@ -522,7 +704,7 @@ function renderQ() {
       <div class="prompt"><button class="spk" id="say" aria-label="듣기">${SPK}</button><div class="word" dir="auto">${esc(ws[q.k].w)}${ws[q.k].r ? `<small>${esc(ws[q.k].r)}</small>` : ""}</div></div>
       <div class="opts">${q.opts.map((o, n) => `<button class="opt" data-o="${o}"><span class="k">${n + 1}</span>${KO[o]}</button>`).join("")}</div>`;
     $("#say").onclick = () => speak(ws[q.k].w, code);
-    speak(ws[q.k].w, code);
+    if (LS.mode !== "blitz") speak(ws[q.k].w, code);
   } else if (q.type === "rev") {
     q.opts = q.opts || optsFor(q.k);
     box.innerHTML = `<h3 class="qtitle">${cur}로 고르세요</h3>
@@ -536,6 +718,7 @@ function renderQ() {
     act.textContent = "짝을 모두 맞추면 넘어가요";
     LS.pick = { l: null, r: null, left: q.keys.length, miss: false };
   }
+  decorate();
 }
 $("#qbox").addEventListener("click", e => {
   const b = e.target.closest(".opt"); if (!b || LS.state !== "ask") return;
@@ -543,6 +726,7 @@ $("#qbox").addEventListener("click", e => {
   if (q.type === "match") return matchTap(b);
   document.querySelectorAll("#qbox .opt").forEach(x => x.setAttribute("aria-pressed", x === b));
   LS.sel = +b.dataset.o;
+  if (LS.mode === "blitz") { check(); return; }
   $("#action").disabled = false;
   if (q.type === "rev") speak(words(cur)[LS.sel].w, L[cur][0]);
 });
@@ -556,7 +740,7 @@ function matchTap(b) {
     if (a.dataset.k === c.dataset.k) {
       [a, c].forEach(x => { x.classList.add("right"); x.setAttribute("aria-pressed", false); setTimeout(() => { x.classList.remove("right"); x.classList.add("gone"); }, 250); });
       P.left--; beep(true);
-      if (P.left === 0) { if (!P.miss) LS.right++; feedback(true, ""); }
+      if (P.left === 0) { if (!P.miss) { LS.right++; LS.combo++; if (LS.combo >= 3) LS.bonus++; } else LS.combo = 0; feedback(true, ""); }
     } else {
       P.miss = true; beep(false);
       [a, c].forEach(x => { x.classList.add("wrong", "shake"); x.setAttribute("aria-pressed", false); setTimeout(() => x.classList.remove("wrong", "shake"), 400); });
@@ -571,9 +755,10 @@ function check() {
     const o = +x.dataset.o;
     if (o === q.k) x.classList.add("right"); else if (o === LS.sel) x.classList.add("wrong");
   });
-  if (ok) { LS.right++; }
+  if (ok) { LS.right++; LS.combo++; if (LS.combo >= 3 && LS.mode !== "blitz") LS.bonus++; }
+  else if (LS.mode === "blitz") { LS.wrong++; LS.combo = 0; LS.end -= 3000; }
   else {
-    LS.wrong++; LS.hearts--;
+    LS.wrong++; LS.hearts--; LS.combo = 0;
     $("#hearts").textContent = LS.hearts;
     LS.qs.push({ type: q.type, k: q.k }); // 틀린 문제는 끝에 한 번 더
   }
@@ -589,15 +774,18 @@ function feedback(ok, ans) {
   fb.hidden = false;
   fb.innerHTML = ok ? `${PRAISE[Math.floor(Math.random() * PRAISE.length)]}${ans ? `<small dir="auto">${esc(ans)}</small>` : ""}` : `아쉬워요<small dir="auto">정답: ${esc(ans)}</small>`;
   const act = $("#action"); act.disabled = false; act.textContent = "계속"; act.focus();
+  react(ok);
+  if (LS.mode === "blitz") { act.disabled = true; act.textContent = ok ? "+1점" : "-3초"; LS.state = "wait"; setTimeout(next, ok ? 450 : 1100); }
 }
 function next() {
+  if (LS.mode === "blitz") return nextBlitz();
   if (LS.hearts <= 0) return finish(false);
   LS.pos++;
   if (LS.pos >= LS.qs.length) return finish(true);
   renderQ();
 }
-$("#action").onclick = () => { if (LS.state === "ask") { if (LS.sel !== null) check(); } else next(); };
-$("#quit").onclick = () => openCourse(cur);
+$("#action").onclick = () => { if (LS.mode === "blitz") return; if (LS.state === "ask") { if (LS.sel !== null) check(); } else next(); };
+$("#quit").onclick = () => { clearInterval(blitzT); if (LS) LS.state = "over"; openCourse(cur); };
 document.addEventListener("keydown", e => {
   if ($("#lesson").hidden || e.target.tagName === "INPUT") return;
   if (e.key === "Enter") { e.preventDefault(); $("#action").click(); return; }
@@ -609,24 +797,29 @@ function finish(ok) {
   $("#prog").style.width = "100%";
   const r = $("#rbox");
   if (!ok) {
-    r.innerHTML = `<div class="medal fail">♡</div><h2>하트를 다 썼어요</h2><p>괜찮아요. 단어장을 한 번 보고 다시 해 봐요.</p>
+    r.innerHTML = `<div class="mas big">${mascot("sad")}</div><h2>하트를 다 썼어요</h2><p>괜찮아요. 단어장을 한 번 보고 다시 해 봐요.</p>
       <button class="btn" id="retry">다시 하기</button><button class="btn ghost" id="toC">단원 목록으로</button>`;
   } else {
     const total = LS.right + LS.wrong;
     const acc = total ? Math.round(LS.right / total * 100) : 100;
-    const gain = 10 + (LS.wrong === 0 ? 5 : 0);
-    S.xp += gain;
+    const gain = 10 + (LS.wrong === 0 ? 5 : 0) + LS.bonus;
+    const lvUp = addXP(gain);
     S.done[cur] = Math.max(S.done[cur] || 0, LS.i + 1);
     const today = dayStr(new Date()), yest = dayStr(new Date(Date.now() - 864e5));
     if (S.last !== today) { S.streak = S.last === yest ? S.streak + 1 : 1; S.last = today; }
+    const newStamp = S.done[cur] >= LESSONS.length && !S.stamps[cur];
+    if (newStamp) S.stamps[cur] = dayStr(new Date());
     save(); stats();
     const all = S.done[cur] >= LESSONS.length;
     r.innerHTML = `<div class="medal">${LS.i + 1}</div><h2>${LESSONS[LS.i].t} 단원 완료!</h2>
       <p>${all ? `${cur} 기초 단어 ${KO.length}개를 모두 배웠어요.` : `다음은 ${LESSONS[Math.min(LS.i + 1, LESSONS.length - 1)].t} 단원이에요.`}</p>
       <div class="tiles"><div class="tile"><b>+${gain}</b><span>경험치</span></div><div class="tile"><b>${acc}%</b><span>정확도</span></div><div class="tile"><b>${S.streak}일</b><span>연속 학습</span></div></div>
+      ${lvUp ? `<p class="lvup">레벨 업! 이제 Lv.${level()}</p>` : ""}
+      ${newStamp ? `<div class="stamp new">${stampHtml(cur)}</div><p>${esc(cur)} 여권 도장을 받았어요!</p>` : ""}
       <button class="btn" id="toC">계속하기</button>`;
   }
   show("result");
+  if (ok) confetti();
   const toC = $("#toC"); if (toC) toC.onclick = () => openCourse(cur);
   const re = $("#retry"); if (re) re.onclick = () => startLesson(LS.i);
 }
