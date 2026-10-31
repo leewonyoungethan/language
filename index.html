@@ -67,6 +67,7 @@ h1,h2,h3{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance;l
 .lang .hi{font-size:13px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .lang .bar{height:6px;border-radius:6px;background:var(--line);margin-top:6px;overflow:hidden}
 .lang .bar i{display:block;height:100%;background:var(--gold)}
+.lang .tag{justify-self:start;margin-top:4px;font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.02em}
 .lang.soon{opacity:.6;border-bottom-width:2px}
 .lang.soon .hi{font-style:normal}
 .lang:not(.soon):hover{border-color:var(--accent)}
@@ -364,17 +365,45 @@ h1,h2,h3{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance;l
 // 사용자가 준 언어 목록 전체
 const ALL_NAMES = `가리푸나어, 가어, 가가우즈어, 가요어, 간다어, 간어, 갈리시아어, 그으즈어, 고려말, 교회 라틴어, 교회 슬라브어, 곤드어, 과들루프 크리올, 과라니어, 관체어, 광둥어, 구니가미어, 구자라트어, 그레보어, 그리스어, 그린란드어, 그바야어, 길라키어, 나바호어, 나와어, 나우루어, 나우아틀어, 나폴리어, 남아제르바이잔어, 네덜란드어, 네덜란드 저지 독일어, 네와르어, 네팔어, 노가이어, 노르웨이어, 뉘노르스크, 눠쑤어, 니안자어, 니암웨지어, 니오로어, 니우에어, 다르과어, 다리어, 다자어, 다야크어, 대만 관화, 덴마크어, 델라웨어어, 도그리어, 도그리브어, 독일어, 두알라어, 둥간어, 듈라어, 디베히어, 딩카어, 라디노어, 라딘어, 라로통가어, 라오어, 라이바바에어, 라자스탄어, 라트비아어, 라틴어, 라파누이어, 라푸아리아어, 란다어, 람바어, 러시아어, 레즈긴어, 로만슈어, 로지어, 롬바르디아어, 롬어, 루런어, 루마니아어, 루바룰루아어, 루바카탕가어, 루샤이어, 루신어, 루오어, 루이세뇨어, 룩셈부르크어, 룬다어, 룬디어, 룰레 사미어, 룽자어, 르완다어, 리투아니아어, 림뷔르흐어, 링갈라어, 마가히어, 마니푸르어, 마두라어, 마라티어, 마르와르어, 마르키즈어, 마리어, 마사이어, 마셜어, 마오리어, 마이틸리어, 마카사르어, 마케도니아어, 마푸둥군어, 만다르어, 만데어, 만주어, 말라가시어, 말라얄람어, 말레이어, 말레이시아 북경어, 망가레바어, 매사추세츠어, 맨어, 멘데어, 모리셔스 크리올어, 모시어, 모호크어, 목샤어, 몰도바어, 몰타어, 몽골어, 몽어, 무스코지어, 미낭카바우어, 미란다어, 미케네 그리스어, 미크맥어, 민난어, 민어(언어), 바뉴마스어, 바바리아어, 바사어, 바이어, 바스크어, 바시키르어, 반다어, 반달어, 발루치어, 발리어, 밤바라어, 버로어, 버마어, 베다 산스크리트어, 베르티어, 베자어, 베트남 문학 중국, 베트남어, 벤다어, 벨라루스어, 벰바어, 벵골어, 보스니아어, 보지푸리어, 보크몰, 보트어, 부기어, 부리아트어, 불가리아어, 브라지어, 브르타뉴어, 블랙풋어, 블린어, 비니어, 비슐라마어, 비콜어, 비하르어, 사르데냐어, 사마리아 아람어, 사모기티아어, 사모아어, 사사크어, 사포텍어, 산다웨어, 산스크리트어, 산탈어, 상고어, 상고 한어, 샤이엔어, 샤크어, 샨어, 샹어, 서아르메니아어, 세네카어, 세레르어, 세르비아어, 세부아노어, 세이셸 크리올, 센티널어, 셀쿠프어, 소그드어, 소르브어, 소말리어, 소토어, 손소롤어, 송가이어, 쇼나어, 수어, 수메르어, 수수어, 수쿠마어, 수화, 순다어, 스와티어, 스와힐리어, 스웨덴어, 스코트어, 스코틀랜드 게일어, 스페인어, 슬레이비어, 슬로바키아어, 슬로베니아어, 시다모어, 시리아어, 시칠리아어, 신디어, 싱가포르 북경어, 싱할라어, 아당메어, 아디게어, 아라곤어, 아라왁어, 아라우칸어, 아라파호어, 아람어, 아랍어, 아로마니아어, 아르메니아어, 아마미어, 아바르어, 아베스타어, 아삼어, 아스투리아스어, 아와드어, 아이누어, 아이마라어, 아이슬란드어, 아이티 크리올어, 아일랜드어, 아제르바이잔어, 아체어, 아촐리어, 아칸어, 아티카메쿠어, 아파르어, 아프리칸스어, 아프리힐리어, 알레만어, 알류트어, 알바니아어, 알제리 아랍어, 암하라어, 압하스어, 야오어, 야에야마어, 야쿠트어, 야프어, 에르지아어, 에스토니아어, 에야크어, 에원도어, 에웨어, 에카주크어, 에피크어, 엘람어, 영어, 오네이다어, 오논다가어, 오로모어, 오리야어, 오세이지어, 오세트어, 오스트랄어, 오지브와어, 오크어, 오키나와어, 요나구니어, 와라이어, 와샹어, 와쇼어, 왈라모어, 왈롱어, 왈리스어, 요루바어, 우가리트어, 우드무르트어, 우르두어, 우어, 우즈베크어, 우크라이나어, 움분두어, 월로프어, 웨일스어, 위구르어, 유대 아람어, 은데벨레어, 은동가어, 은제마어, 은콜레어, 응가나산어, 이누크티투트어, 이누피아크어, 이디시어, 이반어, 이보어, 이조어, 이집트 아랍어, 이탈리아어, 인구시어, 인도네시아어, 일로코어, 일본어, 자가와어, 자르마어, 자와어, 잔데어, 재일한국어, 저지 독일어, 저지 색슨어, 제나가어, 제주어, 조지아어, 종카어, 좡어, 주니어, 줄루어, 중국어, 중국조선어, 징포어, 차가타이어, 차모로어, 차바카노어, 차이자어, 체로키어, 체첸어, 체코어, 촉토어, 총가어, 추바슈어, 추크어, 츠와나어, 치누크 통상어, 치브차어, 치페위안어, 침시아어, 카누리어, 카넴부어, 카도어, 카라차이발카르어, 카라칼파크어, 카렌어, 카리브어, 카바르디아어, 카빌어, 카슈미르어, 카슈브어, 카슈비아어, 카시어, 카유가어, 카위어, 카자흐어, 카친어, 카탈루냐어, 칸나다어, 칼리나어, 칼미크어, 캄바어, 케추아어, 코만치어, 코르시카어, 코미어, 코사어, 코스라에어, 콘월어, 콘칸어, 콩고어, 콰냐마어, 쾰른어, 쿠루흐어, 쿠르드어, 쿠르만지어, 쿠미크어, 쿠테나이어, 크로아티아어, 크리올어, 크리어, 크림 타타르어, 크메르어, 크펠레어, 클링온어, 키냐르완다어, 키르기스어, 키리바시어, 키쿠유어, 타갈로그어, 타라슈케비차, 타란토어, 타마셰크어, 타마지트어, 타밀어, 타지크어, 타체히트어, 타타르어, 타히티어, 태국어, 튀르키예어, 테다어, 테레나어, 테툼어, 텔루구어, 템네어, 토비안어, 토스크 알바니아어, 토켈라우어, 토하라어, 톡 피신, 통가어, 통아어, 투르크멘어, 투발루어, 투바어, 투스카로라어, 투아모투어, 툼부카어, 트위어, 틀링깃어, 티그레어, 티그리냐어, 티베트어, 티브어, 파슈토어, 파투아어, 파피아멘토어, 판티어, 팔라우어, 팔레비어, 팔리어, 팜팡가어, 팡가시난어, 팡어, 펀자브어, 페로어, 페르시아어, 펜실베이니아 독일어, 포르투갈어, 폰어, 폰페이어, 푸투나어, 폴란드어, 풀라어, 프랑스어, 피지어, 피지 힌디어, 핀란드어, 필리핀어, 필리핀 북경, 핏케언어, 하와이어, 하우사어, 하이다어, 하치조어, 하카어, 한국어, 한문, 헝가리어, 헤레로어, 호탄어, 후파어, 히리 모투, 히마찰어, 히브리어, 힌디어, 힐리가이노어`.split(",").map(s => s.trim()).filter(Boolean);
 
-// 배울 단어 10개 (순서 고정)
-const KO = ["안녕하세요", "고마워요", "네", "아니요", "물", "하나", "둘", "셋", "엄마", "잘 가요"];
+// 배울 단어 (순서 고정): 기초 10개 + 일상 80개
+const KO = ["안녕하세요", "고마워요", "네", "아니요", "물", "하나", "둘", "셋", "엄마", "잘 가요",
+  "아빠", "아들", "딸", "친구", "아기", "남자", "여자", "가족",
+  "빵", "고기", "우유", "커피", "사과", "달걀", "쌀", "소금",
+  "개", "고양이", "새", "물고기", "말 (동물)", "소", "돼지", "닭",
+  "빨강", "파랑", "노랑", "초록", "하양", "검정", "회색", "주황",
+  "넷", "다섯", "여섯", "일곱", "여덟", "아홉", "열", "백",
+  "오늘", "내일", "어제", "아침", "밤", "지금", "날 (하루)", "시간",
+  "집", "학교", "가게", "병원", "길", "도시", "나라", "화장실",
+  "큰", "작은", "좋은", "나쁜", "뜨거운", "차가운", "새로운", "예쁜",
+  "먹다", "마시다", "가다", "오다", "보다", "자다", "말하다", "사랑하다",
+  "미안해요", "부탁해요", "괜찮아요", "얼마예요?", "몰라요", "사랑해요", "축하해요", "잘 자요"];
 
-// 단원: 어떤 단어를 배우는지
-const LESSONS = [
-  { t: "인사", d: "만나고 헤어질 때", w: [0, 1, 9] },
-  { t: "대답", d: "네와 아니요", w: [2, 3] },
-  { t: "숫자", d: "하나, 둘, 셋", w: [5, 6, 7] },
-  { t: "생활", d: "물과 엄마", w: [4, 8] },
-  { t: "총복습", d: "배운 단어 모두", w: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] }
+// 단원: 어떤 단어를 배우는지, 어떤 몬스터가 나오는지
+const span = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
+const BASE_LESSONS = [
+  { t: "인사", d: "만나고 헤어질 때", w: [0, 1, 9], foe: "인사 슬라임" },
+  { t: "대답", d: "네와 아니요", w: [2, 3], foe: "대답 박쥐" },
+  { t: "숫자", d: "하나, 둘, 셋", w: [5, 6, 7], foe: "숫자 골렘" },
+  { t: "생활", d: "물과 엄마", w: [4, 8], foe: "생활 유령" },
+  { t: "기초 복습", d: "기초 단어 10개", w: span(0, 9), foe: "단어 대왕", boss: true, review: true }
 ];
+const EXT_LESSONS = [
+  { t: "가족", d: "아빠, 친구, 아기", w: span(10, 17), foe: "식구 슬라임" },
+  { t: "음식", d: "빵, 우유, 커피", w: span(18, 25), foe: "먹보 박쥐" },
+  { t: "동물", d: "개, 고양이, 새", w: span(26, 33), foe: "동물 골렘" },
+  { t: "색깔", d: "빨강, 파랑, 노랑", w: span(34, 41), foe: "물감 유령" },
+  { t: "중간 복습", d: "가족부터 색깔까지", w: span(10, 41), foe: "중간 대왕", boss: true, review: true },
+  { t: "숫자 2", d: "넷부터 백까지", w: span(42, 49), foe: "계산 슬라임" },
+  { t: "시간", d: "오늘, 내일, 지금", w: span(50, 57), foe: "시계 박쥐" },
+  { t: "장소", d: "집, 학교, 병원", w: span(58, 65), foe: "길잃은 골렘" },
+  { t: "꾸미는 말", d: "큰, 작은, 예쁜", w: span(66, 73), foe: "변덕 유령" },
+  { t: "복습 2", d: "숫자부터 꾸미는 말까지", w: span(42, 73), foe: "형용사 대왕", boss: true, review: true },
+  { t: "움직임", d: "먹다, 가다, 자다", w: span(74, 81), foe: "행동 슬라임" },
+  { t: "생활 표현", d: "미안해요, 얼마예요?", w: span(82, 89), foe: "수다 박쥐" },
+  { t: "최종 보스", d: "단어 90개 전부", w: span(0, 89), foe: "언어 마왕", boss: true, review: true }
+];
+const BASE_N = BASE_LESSONS.length;
+let LESSONS = BASE_LESSONS;
 
 // [음성 코드, 단어 10개] — "글자|읽는 법"
 const L = {
@@ -525,9 +554,29 @@ const L = {
   "클링온어": ["tlh","nuqneH","qatlho'","HIja'","ghobe'","bIQ","wa'","cha'","wej","SoS","Qapla'"]
 };
 
+// 일상 단어 80개 — KO[10]부터 순서대로. "글자|읽는 법", 단어 사이는 ;
+const EXT_RAW = {
+  "영어": "Dad;Son;Daughter;Friend;Baby;Man;Woman;Family;Bread;Meat;Milk;Coffee;Apple;Egg;Rice;Salt;Dog;Cat;Bird;Fish;Horse;Cow;Pig;Chicken;Red;Blue;Yellow;Green;White;Black;Gray;Orange;Four;Five;Six;Seven;Eight;Nine;Ten;Hundred;Today;Tomorrow;Yesterday;Morning;Night;Now;Day;Time;House;School;Shop;Hospital;Road;City;Country;Toilet;Big;Small;Good;Bad;Hot;Cold;New;Pretty;To eat;To drink;To go;To come;To see;To sleep;To speak;To love;Sorry;Please;It's okay;How much is it?;I don't know;I love you;Congratulations;Good night",
+  "스페인어": "Papá;Hijo;Hija;Amigo;Bebé;Hombre;Mujer;Familia;Pan;Carne;Leche;Café;Manzana;Huevo;Arroz;Sal;Perro;Gato;Pájaro;Pez;Caballo;Vaca;Cerdo;Pollo;Rojo;Azul;Amarillo;Verde;Blanco;Negro;Gris;Naranja;Cuatro;Cinco;Seis;Siete;Ocho;Nueve;Diez;Cien;Hoy;Mañana;Ayer;La mañana;Noche;Ahora;Día;Tiempo;Casa;Escuela;Tienda;Hospital;Calle;Ciudad;País;Baño;Grande;Pequeño;Bueno;Malo;Caliente;Frío;Nuevo;Bonito;Comer;Beber;Ir;Venir;Ver;Dormir;Hablar;Amar;Lo siento;Por favor;Está bien;¿Cuánto cuesta?;No sé;Te quiero;Felicidades;Buenas noches",
+  "프랑스어": "Papa;Fils;Fille;Ami;Bébé;Homme;Femme;Famille;Pain;Viande;Lait;Café;Pomme;Œuf;Riz;Sel;Chien;Chat;Oiseau;Poisson;Cheval;Vache;Cochon;Poulet;Rouge;Bleu;Jaune;Vert;Blanc;Noir;Gris;Orange;Quatre;Cinq;Six;Sept;Huit;Neuf;Dix;Cent;Aujourd'hui;Demain;Hier;Matin;Nuit;Maintenant;Jour;Temps;Maison;École;Magasin;Hôpital;Route;Ville;Pays;Toilettes;Grand;Petit;Bon;Mauvais;Chaud;Froid;Nouveau;Joli;Manger;Boire;Aller;Venir;Voir;Dormir;Parler;Aimer;Désolé;S'il vous plaît;Ça va;C'est combien ?;Je ne sais pas;Je t'aime;Félicitations;Bonne nuit",
+  "독일어": "Papa;Sohn;Tochter;Freund;Baby;Mann;Frau;Familie;Brot;Fleisch;Milch;Kaffee;Apfel;Ei;Reis;Salz;Hund;Katze;Vogel;Fisch;Pferd;Kuh;Schwein;Huhn;Rot;Blau;Gelb;Grün;Weiß;Schwarz;Grau;Orange;Vier;Fünf;Sechs;Sieben;Acht;Neun;Zehn;Hundert;Heute;Morgen;Gestern;Der Morgen;Nacht;Jetzt;Tag;Zeit;Haus;Schule;Laden;Krankenhaus;Straße;Stadt;Land;Toilette;Groß;Klein;Gut;Schlecht;Heiß;Kalt;Neu;Schön;Essen;Trinken;Gehen;Kommen;Sehen;Schlafen;Sprechen;Lieben;Entschuldigung;Bitte;Schon gut;Wie viel kostet das?;Ich weiß nicht;Ich liebe dich;Glückwunsch;Gute Nacht",
+  "이탈리아어": "Papà;Figlio;Figlia;Amico;Bebè;Uomo;Donna;Famiglia;Pane;Carne;Latte;Caffè;Mela;Uovo;Riso;Sale;Cane;Gatto;Uccello;Pesce;Cavallo;Mucca;Maiale;Pollo;Rosso;Blu;Giallo;Verde;Bianco;Nero;Grigio;Arancione;Quattro;Cinque;Sei;Sette;Otto;Nove;Dieci;Cento;Oggi;Domani;Ieri;Mattina;Notte;Adesso;Giorno;Tempo;Casa;Scuola;Negozio;Ospedale;Strada;Città;Paese;Bagno;Grande;Piccolo;Buono;Cattivo;Caldo;Freddo;Nuovo;Bello;Mangiare;Bere;Andare;Venire;Vedere;Dormire;Parlare;Amare;Scusa;Per favore;Va bene;Quanto costa?;Non lo so;Ti amo;Congratulazioni;Buonanotte",
+  "포르투갈어": "Pai;Filho;Filha;Amigo;Bebê;Homem;Mulher;Família;Pão;Carne;Leite;Café;Maçã;Ovo;Arroz;Sal;Cachorro;Gato;Pássaro;Peixe;Cavalo;Vaca;Porco;Frango;Vermelho;Azul;Amarelo;Verde;Branco;Preto;Cinza;Laranja;Quatro;Cinco;Seis;Sete;Oito;Nove;Dez;Cem;Hoje;Amanhã;Ontem;Manhã;Noite;Agora;Dia;Tempo;Casa;Escola;Loja;Hospital;Rua;Cidade;País;Banheiro;Grande;Pequeno;Bom;Ruim;Quente;Frio;Novo;Bonito;Comer;Beber;Ir;Vir;Ver;Dormir;Falar;Amar;Desculpa;Por favor;Tudo bem;Quanto custa?;Não sei;Eu te amo;Parabéns;Boa noite",
+  "러시아어": "Папа|papa;Сын|syn;Дочь|doch';Друг|drug;Ребёнок|rebyonok;Мужчина|muzhchina;Женщина|zhenshchina;Семья|sem'ya;Хлеб|khleb;Мясо|myaso;Молоко|moloko;Кофе|kofe;Яблоко|yabloko;Яйцо|yaytso;Рис|ris;Соль|sol';Собака|sobaka;Кошка|koshka;Птица|ptitsa;Рыба|ryba;Лошадь|loshad';Корова|korova;Свинья|svin'ya;Курица|kuritsa;Красный|krasnyy;Синий|siniy;Жёлтый|zhyoltyy;Зелёный|zelyonyy;Белый|belyy;Чёрный|chyornyy;Серый|seryy;Оранжевый|oranzhevyy;Четыре|chetyre;Пять|pyat';Шесть|shest';Семь|sem';Восемь|vosem';Девять|devyat';Десять|desyat';Сто|sto;Сегодня|segodnya;Завтра|zavtra;Вчера|vchera;Утро|utro;Ночь|noch';Сейчас|seychas;День|den';Время|vremya;Дом|dom;Школа|shkola;Магазин|magazin;Больница|bol'nitsa;Дорога|doroga;Город|gorod;Страна|strana;Туалет|tualet;Большой|bol'shoy;Маленький|malen'kiy;Хороший|khoroshiy;Плохой|plokhoy;Горячий|goryachiy;Холодный|kholodnyy;Новый|novyy;Красивый|krasivyy;Есть|yest';Пить|pit';Идти|idti;Приходить|prikhodit';Видеть|videt';Спать|spat';Говорить|govorit';Любить|lyubit';Извините|izvinite;Пожалуйста|pozhaluysta;Всё хорошо|vsyo khorosho;Сколько стоит?|skol'ko stoit?;Я не знаю|ya ne znayu;Я тебя люблю|ya tebya lyublyu;Поздравляю|pozdravlyayu;Спокойной ночи|spokoynoy nochi",
+  "일본어": "お父さん|otōsan;息子|musuko;娘|musume;友達|tomodachi;赤ちゃん|akachan;男|otoko;女|onna;家族|kazoku;パン|pan;肉|niku;牛乳|gyūnyū;コーヒー|kōhī;りんご|ringo;卵|tamago;米|kome;塩|shio;犬|inu;猫|neko;鳥|tori;魚|sakana;馬|uma;牛|ushi;豚|buta;鶏|niwatori;赤|aka;青|ao;黄色|kiiro;緑|midori;白|shiro;黒|kuro;灰色|haiiro;オレンジ|orenji;四|yon;五|go;六|roku;七|nana;八|hachi;九|kyū;十|jū;百|hyaku;今日|kyō;明日|ashita;昨日|kinō;朝|asa;夜|yoru;今|ima;日|hi;時間|jikan;家|ie;学校|gakkō;店|mise;病院|byōin;道|michi;町|machi;国|kuni;トイレ|toire;大きい|ōkii;小さい|chiisai;いい|ii;悪い|warui;熱い|atsui;冷たい|tsumetai;新しい|atarashii;きれい|kirei;食べる|taberu;飲む|nomu;行く|iku;来る|kuru;見る|miru;寝る|neru;話す|hanasu;愛する|aisuru;ごめんなさい|gomen nasai;お願いします|onegai shimasu;大丈夫|daijōbu;いくらですか|ikura desu ka;分かりません|wakarimasen;愛してる|aishiteru;おめでとう|omedetō;おやすみ|oyasumi",
+  "중국어": "爸爸|bàba;儿子|érzi;女儿|nǚ'ér;朋友|péngyou;宝宝|bǎobao;男人|nánrén;女人|nǚrén;家人|jiārén;面包|miànbāo;肉|ròu;牛奶|niúnǎi;咖啡|kāfēi;苹果|píngguǒ;鸡蛋|jīdàn;米饭|mǐfàn;盐|yán;狗|gǒu;猫|māo;鸟|niǎo;鱼|yú;马|mǎ;牛|niú;猪|zhū;鸡|jī;红色|hóngsè;蓝色|lánsè;黄色|huángsè;绿色|lǜsè;白色|báisè;黑色|hēisè;灰色|huīsè;橙色|chéngsè;四|sì;五|wǔ;六|liù;七|qī;八|bā;九|jiǔ;十|shí;一百|yìbǎi;今天|jīntiān;明天|míngtiān;昨天|zuótiān;早上|zǎoshang;晚上|wǎnshang;现在|xiànzài;天|tiān;时间|shíjiān;家|jiā;学校|xuéxiào;商店|shāngdiàn;医院|yīyuàn;路|lù;城市|chéngshì;国家|guójiā;厕所|cèsuǒ;大|dà;小|xiǎo;好|hǎo;坏|huài;热|rè;冷|lěng;新|xīn;漂亮|piàoliang;吃|chī;喝|hē;去|qù;来|lái;看|kàn;睡觉|shuìjiào;说|shuō;爱|ài;对不起|duìbuqǐ;请|qǐng;没关系|méi guānxi;多少钱?|duōshao qián?;我不知道|wǒ bù zhīdào;我爱你|wǒ ài nǐ;恭喜|gōngxǐ;晚安|wǎn'ān",
+  "베트남어": "Bố;Con trai;Con gái;Bạn;Em bé;Đàn ông;Phụ nữ;Gia đình;Bánh mì;Thịt;Sữa;Cà phê;Táo;Trứng;Gạo;Muối;Chó;Mèo;Chim;Cá;Ngựa;Bò;Lợn;Gà;Đỏ;Xanh dương;Vàng;Xanh lá;Trắng;Đen;Xám;Cam;Bốn;Năm;Sáu;Bảy;Tám;Chín;Mười;Một trăm;Hôm nay;Ngày mai;Hôm qua;Buổi sáng;Ban đêm;Bây giờ;Ngày;Thời gian;Nhà;Trường học;Cửa hàng;Bệnh viện;Đường;Thành phố;Đất nước;Nhà vệ sinh;To;Nhỏ;Tốt;Xấu;Nóng;Lạnh;Mới;Đẹp;Ăn;Uống;Đi;Đến;Nhìn;Ngủ;Nói;Yêu;Xin lỗi;Làm ơn;Không sao;Bao nhiêu tiền?;Tôi không biết;Anh yêu em;Chúc mừng;Chúc ngủ ngon",
+  "인도네시아어": "Ayah;Anak laki-laki;Anak perempuan;Teman;Bayi;Laki-laki;Perempuan;Keluarga;Roti;Daging;Susu;Kopi;Apel;Telur;Beras;Garam;Anjing;Kucing;Burung;Ikan;Kuda;Sapi;Babi;Ayam;Merah;Biru;Kuning;Hijau;Putih;Hitam;Abu-abu;Oranye;Empat;Lima;Enam;Tujuh;Delapan;Sembilan;Sepuluh;Seratus;Hari ini;Besok;Kemarin;Pagi;Malam;Sekarang;Hari;Waktu;Rumah;Sekolah;Toko;Rumah sakit;Jalan;Kota;Negara;Toilet;Besar;Kecil;Baik;Buruk;Panas;Dingin;Baru;Cantik;Makan;Minum;Pergi;Datang;Melihat;Tidur;Berbicara;Mencintai;Maaf;Tolong;Tidak apa-apa;Berapa harganya?;Saya tidak tahu;Aku cinta kamu;Selamat;Selamat malam"
+};
+const EXT = {};
+for (const n in EXT_RAW) EXT[n] = EXT_RAW[n].split(";");
+["싱가포르 북경어", "말레이시아 북경어", "필리핀 북경"].forEach(n => EXT[n] = EXT["중국어"]);
+
+const lessonsFor = n => EXT[n] ? BASE_LESSONS.concat(EXT_LESSONS) : BASE_LESSONS;
 const $ = s => document.querySelector(s);
 const READY = ALL_NAMES.filter(n => L[n]);
-const words = n => L[n].slice(1).map(s => { const [w, r] = s.split("|"); return { w, r: r || "" }; });
+const words = n => L[n].slice(1).concat(EXT[n] || []).map(s => { const [w, r] = s.split("|"); return { w, r: r || "" }; });
+const allIdx = () => [...Array(words(cur).length).keys()];
 const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const SPK = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
@@ -621,14 +670,15 @@ function renderFun() {
 }
 
 // 몬스터
-const FOES = ["인사 슬라임", "대답 박쥐", "숫자 골렘", "생활 유령", "단어 대왕"];
+const foeName = i => i < 0 ? "시간 도깨비" : (LESSONS[i] || {}).foe || "몬스터";
+const isBoss = i => !!(LESSONS[i] && LESSONS[i].boss);
 function monster(i, mood) {
   const c = i < 0 ? "#E8B730" : ["#6CC46A", "#9B7BEA", "#E0864F", "#5BB0E0", "#E0506E"][i % 5];
   const ink = "#18213A", line = 'stroke="rgba(0,0,0,.28)" stroke-width="1.5"';
-  const wings = i === 1 ? `<path d="M10 30Q-2 20 2 40Q6 33 10 37Z M46 30Q58 20 54 40Q50 33 46 37Z" fill="${c}" ${line}/>` : "";
-  const horns = i >= 2 || i < 0 ? `<path d="M17 22 13 7 23 17Z M39 22 43 7 33 17Z" fill="#FFF7E0" ${line}/>` : "";
-  const crown = i === 4 ? '<path d="M18 15V3l5 6 5-8 5 8 5-6v12Z" fill="#FFD43B" stroke="#B8860B" stroke-width="1.4"/>' : "";
-  const body = i === 2
+  const wings = i % 5 === 1 ? `<path d="M10 30Q-2 20 2 40Q6 33 10 37Z M46 30Q58 20 54 40Q50 33 46 37Z" fill="${c}" ${line}/>` : "";
+  const horns = i % 5 >= 2 || i < 0 ? `<path d="M17 22 13 7 23 17Z M39 22 43 7 33 17Z" fill="#FFF7E0" ${line}/>` : "";
+  const crown = isBoss(i) ? '<path d="M18 15V3l5 6 5-8 5 8 5-6v12Z" fill="#FFD43B" stroke="#B8860B" stroke-width="1.4"/>' : "";
+  const body = i % 5 === 2
     ? `<rect x="9" y="16" width="38" height="34" rx="8" fill="${c}" ${line}/><path d="M14 24h6M36 44h6M30 20v4" stroke="rgba(0,0,0,.2)" stroke-width="2"/>`
     : `<path d="M8 50Q4 22 28 15Q52 22 48 50Q43 46 38 50Q33 46 28 50Q23 46 18 50Q13 46 8 50Z" fill="${c}" ${line}/>`;
   const eyes = mood === "ko" ? `<path d="M18 26l6 6M24 26l-6 6M32 26l6 6M38 26l-6 6" stroke="${ink}" stroke-width="2.5" stroke-linecap="round"/>`
@@ -637,12 +687,12 @@ function monster(i, mood) {
   const mouth = mood === "ko" ? `<path d="M22 42q6-4 12 0" stroke="${ink}" stroke-width="2.5" fill="none" stroke-linecap="round"/>`
     : mood === "hurt" ? `<ellipse cx="28" cy="41" rx="4" ry="3.2" fill="${ink}"/>`
     : `<path d="M20 39l3 3 2.5-3 2.5 3 2.5-3 2.5 3 3-3" stroke="${ink}" stroke-width="2" fill="none" stroke-linejoin="round"/>`;
-  return `<svg viewBox="0 0 56 56" role="img" aria-label="${i < 0 ? "시간 도깨비" : FOES[i]}">${wings}${horns}${body}${crown}${eyes}${mouth}</svg>`;
+  return `<svg viewBox="0 0 56 56" role="img" aria-label="${foeName(i)}">${wings}${horns}${body}${crown}${eyes}${mouth}</svg>`;
 }
 function setupArena(i) {
   LS.foe = i; LS.hits = 0;
-  $("#foeName").textContent = i < 0 ? "시간 도깨비" : FOES[i];
-  const f = $("#foe"); f.className = "monster" + (i === LESSONS.length - 1 ? " boss" : ""); f.innerHTML = monster(i, "idle");
+  $("#foeName").textContent = foeName(i);
+  const f = $("#foe"); f.className = "monster" + (isBoss(i) ? " boss" : ""); f.innerHTML = monster(i, "idle");
   $("#mas").innerHTML = mascot("idle");
   updateArena();
 }
@@ -769,7 +819,7 @@ function nextBlitz() {
   if (LS.state === "over") return;
   if (Date.now() >= LS.end) return finishBlitz();
   const prev = LS.qs[LS.pos]; let k;
-  do { k = Math.floor(Math.random() * KO.length); } while (prev && prev.k === k);
+  do { k = Math.floor(Math.random() * words(cur).length); } while (prev && prev.k === k);
   LS.qs.push({ type: ["pick", "rev", "ox"][Math.floor(Math.random() * 3)], k });
   LS.pos++;
   renderQ();
@@ -867,7 +917,7 @@ function spellTap(lt) {
 let filter = "ready";
 function renderHome() {
   stats(); renderFun();
-  $("#notice").innerHTML = `목록에 있는 <b>${ALL_NAMES.length}개 언어</b> 중 <b>${READY.length}개</b>를 지금 배울 수 있어요. 나머지는 단어를 정확히 확인한 다음에 열어요.`;
+  $("#notice").innerHTML = `목록에 있는 <b>${ALL_NAMES.length}개 언어</b> 중 <b>${READY.length}개</b>를 지금 배울 수 있어요. 그중 <b>${Object.keys(EXT).length}개</b>는 일상 단어 90개, 18단원까지 배워요. 나머지는 단어를 정확히 확인한 다음에 열어요.`;
   $("#fReady").textContent = `지금 배우기 ${READY.length}`;
   $("#fAll").textContent = `전체 ${ALL_NAMES.length}`;
   $("#fReady").setAttribute("aria-pressed", filter === "ready");
@@ -875,8 +925,8 @@ function renderHome() {
   const c = $("#cont");
   if (S.recent && L[S.recent]) {
     const d = S.done[S.recent] || 0;
-    const next = Math.min(d, LESSONS.length - 1);
-    c.innerHTML = `<button class="continue" id="contBtn"><div><span class="big">${esc(S.recent)} 이어서 하기</span><small>${d >= LESSONS.length ? "모든 단원 완료 · 다시 복습해요" : `${next + 1}단원 · ${LESSONS[next].t}`}</small></div><span class="go">→</span></button>`;
+    const LL = lessonsFor(S.recent), next = Math.min(d, LL.length - 1);
+    c.innerHTML = `<button class="continue" id="contBtn"><div><span class="big">${esc(S.recent)} 이어서 하기</span><small>${d >= LL.length ? "모든 단원 완료 · 다시 복습해요" : `${next + 1}단원 · ${LL[next].t}`}</small></div><span class="go">→</span></button>`;
     $("#contBtn").onclick = () => openCourse(S.recent);
   } else c.innerHTML = "";
   const q = $("#search").value.trim();
@@ -886,7 +936,7 @@ function renderHome() {
   g.innerHTML = list.map(n => {
     if (!L[n]) return `<button class="lang soon" data-n="${esc(n)}"><span class="nm">${esc(n)}</span><span class="hi">준비 중</span></button>`;
     const d = S.done[n] || 0;
-    return `<button class="lang" data-n="${esc(n)}"><span class="nm">${esc(n)}</span><span class="hi" dir="auto">${esc(words(n)[0].w)}</span><span class="bar"><i style="width:${d / LESSONS.length * 100}%"></i></span></button>`;
+    return `<button class="lang" data-n="${esc(n)}"><span class="nm">${esc(n)}</span><span class="hi" dir="auto">${esc(words(n)[0].w)}</span>${EXT[n] ? `<span class="tag">일상 단어 ${words(n).length}개</span>` : ""}<span class="bar"><i style="width:${Math.min(1, d / lessonsFor(n).length) * 100}%"></i></span></button>`;
   }).join("");
 }
 $("#grid").addEventListener("click", e => {
@@ -903,14 +953,15 @@ $("#fAll").onclick = () => { filter = "all"; renderHome(); };
 let cur = null;
 function openCourse(n) {
   cur = n; S.recent = n; save();
+  LESSONS = lessonsFor(n);
   const d = S.done[n] || 0;
   $("#cName").textContent = n;
-  $("#cInfo").textContent = `${LESSONS.length}단원 중 ${Math.min(d, LESSONS.length)}단원 완료 · 단어 ${KO.length}개`;
+  $("#cInfo").textContent = `${LESSONS.length}단원 중 ${Math.min(d, LESSONS.length)}단원 완료 · 단어 ${words(n).length}개`;
   $("#blitzBtn").innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg><span><b>번개 퀴즈</b><small>60초 동안 몇 개 맞힐까요? · 최고 기록 ${S.best[n] || 0}개</small></span><span class="go">→</span>`;
   const off = [0, 64, 0, -64, 0];
   $("#path").innerHTML = LESSONS.map((l, i) => {
     const st = i < d ? "done" : i === d ? "current" : "locked";
-    return `<div class="node ${st}${i === LESSONS.length - 1 ? " boss" : ""}" style="transform:translateX(${off[i]}px)"><button data-i="${i}" aria-label="${i + 1}단원 ${l.t}">${i < d ? "✓" : monster(i, "idle")}</button><span class="lbl">${i + 1}. ${l.t}<small>${FOES[i]}${i === LESSONS.length - 1 ? " · 보스" : ""}</small></span></div>`;
+    return `<div class="node ${st}${l.boss ? " boss" : ""}" style="transform:translateX(${off[i % 4]}px)"><button data-i="${i}" aria-label="${i + 1}단원 ${l.t}">${i < d ? "✓" : monster(i, "idle")}</button><span class="lbl">${i + 1}. ${l.t}<small>${l.foe}${l.boss ? " · 보스" : ""}</small></span></div>`;
   }).join("");
   const ws = words(n), code = L[n][0];
   $("#wlist").innerHTML = ws.map((w, i) => `<div class="wrow"><span class="ko">${KO[i]}</span><span class="fw" dir="auto">${esc(w.w)}${w.r ? `<small>${esc(w.r)}</small>` : ""}</span><button class="spk" data-say="${i}" aria-label="${KO[i]} 듣기">${SPK}</button></div>`).join("");
@@ -929,22 +980,26 @@ $("#toHome").onclick = () => { renderHome(); show("home"); };
 // 레슨
 let LS = null;
 function startLesson(i) {
-  const ws = LESSONS[i].w;
+  let ws = LESSONS[i].w;
+  if (LESSONS[i].review) ws = shuffle(ws).slice(0, 7);
   let qs = [];
   const ex = shuffle(["type", "ox", "spell"].concat(hasVoice(L[cur][0]) ? ["listen"] : []));
-  ws.forEach((k, n) => { qs.push({ type: "pick", k }); qs.push({ type: "rev", k }); qs.push({ type: ex[n % ex.length], k }); });
+  ws.forEach((k, n) => {
+    if (ws.length > 4) qs.push({ type: Math.random() < .5 ? "pick" : "rev", k });
+    else { qs.push({ type: "pick", k }); qs.push({ type: "rev", k }); }
+    qs.push({ type: ex[n % ex.length], k });
+  });
   if (ws.some(k => k >= 5 && k <= 7)) qs.push({ type: "seq", k: 5 + Math.floor(Math.random() * 3) });
   qs = shuffle(qs);
-  if (i === LESSONS.length - 1) qs = qs.slice(0, 14);
   // 짝 맞추기 4쌍: 이번 단원 단어 + 부족하면 다른 단어
-  const extra = shuffle(KO.map((_, k) => k).filter(k => !ws.includes(k)));
+  const extra = shuffle(allIdx().filter(k => !ws.includes(k)));
   const mk = shuffle(ws).slice(0, 4).concat(extra).slice(0, 4);
   qs.splice(Math.min(3, qs.length), 0, { type: "match", keys: mk });
   LS = { mode: "lesson", i, qs, pos: 0, hearts: 5, first: qs.length, right: 0, wrong: 0, combo: 0, bonus: 0, sel: null, state: "ask" };
   show("lesson"); setMode(); setupArena(i);
   renderQ();
 }
-function optsFor(k) { return shuffle([k, ...shuffle(KO.map((_, j) => j).filter(j => j !== k)).slice(0, 3)]); }
+function optsFor(k) { return shuffle([k, ...shuffle(allIdx().filter(j => j !== k)).slice(0, 3)]); }
 function renderQ() {
   const q = LS.qs[LS.pos], ws = words(cur), code = L[cur][0];
   if (LS.mode !== "blitz") $("#prog").style.width = (LS.pos / LS.qs.length * 100) + "%";
@@ -966,7 +1021,7 @@ function renderQ() {
       <div class="prompt"><div class="word">${KO[q.k]}</div></div>
       <div class="opts">${q.opts.map((o, n) => `<button class="opt" data-o="${o}" dir="auto"><span class="k">${n + 1}</span>${esc(ws[o].w)}${ws[o].r ? `<small>${esc(ws[o].r)}</small>` : ""}</button>`).join("")}</div>`;
   } else if (q.type === "ox") {
-    if (q.j === undefined) q.j = Math.random() < .5 ? q.k : shuffle(KO.map((_, j) => j).filter(j => j !== q.k))[0];
+    if (q.j === undefined) q.j = Math.random() < .5 ? q.k : shuffle(allIdx().filter(j => j !== q.k))[0];
     q.ans = q.j === q.k ? 1 : 0;
     box.innerHTML = `<h3 class="qtitle">맞을까요, 틀릴까요?</h3>
       <div class="prompt"><button class="spk" id="say" aria-label="듣기">${SPK}</button><div class="word"><span dir="auto">${esc(ws[q.k].w)}</span>${ws[q.k].r ? `<small>${esc(ws[q.k].r)}</small>` : ""}<span class="eq">= ${KO[q.j]}</span></div></div>
@@ -1103,7 +1158,7 @@ function finish(ok) {
   $("#prog").style.width = "100%";
   const r = $("#rbox");
   if (!ok) {
-    r.innerHTML = `<div class="mas big">${mascot("sad")}</div><h2>${LS.foe >= 0 ? FOES[LS.foe] : "몬스터"}에게 졌어요</h2><p>괜찮아요. 물약으로 부활하거나 단어장을 보고 다시 도전해요.</p>
+    r.innerHTML = `<div class="mas big">${mascot("sad")}</div><h2>${foeName(LS.foe)}에게 졌어요</h2><p>괜찮아요. 물약으로 부활하거나 단어장을 보고 다시 도전해요.</p>
       ${reviveBtn()}
       <button class="btn" id="retry">다시 하기</button><button class="btn ghost" id="toC">단원 목록으로</button>`;
   } else {
@@ -1111,17 +1166,17 @@ function finish(ok) {
     const acc = total ? Math.round(LS.right / total * 100) : 100;
     const gain = 10 + (LS.wrong === 0 ? 5 : 0) + LS.bonus;
     const lvUp = addXP(gain);
-    const coins = 5 + (LS.wrong === 0 ? 5 : 0) + LS.bonus + (LS.i === LESSONS.length - 1 ? 20 : 0);
+    const coins = 5 + (LS.wrong === 0 ? 5 : 0) + LS.bonus + (isBoss(LS.i) ? 20 : 0);
     S.coins += coins;
     S.done[cur] = Math.max(S.done[cur] || 0, LS.i + 1);
     const today = dayStr(new Date()), yest = dayStr(new Date(Date.now() - 864e5));
     if (S.last !== today) { S.streak = S.last === yest ? S.streak + 1 : 1; S.last = today; }
-    const newStamp = S.done[cur] >= LESSONS.length && !S.stamps[cur];
+    const newStamp = S.done[cur] >= BASE_N && !S.stamps[cur];
     if (newStamp) S.stamps[cur] = dayStr(new Date());
     save(); stats();
     const all = S.done[cur] >= LESSONS.length;
-    r.innerHTML = `<div class="ko-wrap">${monster(LS.i, "ko")}<span class="ko-tag">K.O.</span></div><h2>${FOES[LS.i]} 격파!</h2>
-      <p>${all ? `${cur} 기초 단어 ${KO.length}개를 모두 배웠어요.` : `다음은 ${LESSONS[Math.min(LS.i + 1, LESSONS.length - 1)].t} 단원이에요.`}</p>
+    r.innerHTML = `<div class="ko-wrap">${monster(LS.i, "ko")}<span class="ko-tag">K.O.</span></div><h2>${foeName(LS.i)} 격파!</h2>
+      <p>${all ? `${cur} 단어 ${words(cur).length}개를 모두 배웠어요.` : `다음은 ${LESSONS[Math.min(LS.i + 1, LESSONS.length - 1)].t} 단원이에요.`}</p>
       <div class="tiles"><div class="tile"><b>+${gain}</b><span>경험치</span></div><div class="tile"><b>${acc}%</b><span>정확도</span></div><div class="tile"><b>+${coins}</b><span>코인</span></div></div>
       ${lvUp ? `<p class="lvup">레벨 업! 이제 Lv.${level()}</p>` : ""}
       ${newStamp ? `<div class="stamp new">${stampHtml(cur)}</div><p>${esc(cur)} 여권 도장을 받았어요!</p>` : ""}
