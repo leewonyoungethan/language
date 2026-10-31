@@ -145,6 +145,27 @@ h1,h2,h3{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance;l
 .tile span{font-size:12px;color:var(--muted);letter-spacing:.04em}
 
 .toast{position:fixed;left:50%;top:calc(12px + env(safe-area-inset-top,0px));transform:translateX(-50%);max-width:min(92vw,460px);background:var(--ink);color:var(--bg);padding:12px 16px;border-radius:14px;font-size:14px;z-index:20}
+/* 새 문제 종류 */
+.eq{display:block;font-size:22px;color:var(--accent);margin-top:4px}
+.opts.ox .opt{padding:18px 12px}
+.opt .big{display:block;font-family:var(--display);font-size:34px;line-height:1.1}
+.opt.o .big{color:var(--good)}
+.opt.x .big{color:var(--bad)}
+.listen{margin-top:18px;display:grid;justify-items:center;gap:10px;padding:20px;border-radius:18px;background:var(--surface);border:2px solid var(--line)}
+.spk.huge{width:96px;height:96px;border-radius:24px;background:var(--accent);border-color:var(--accent-deep);color:var(--on-accent)}
+.spk.huge svg{width:44px;height:44px}
+.slow{border:0;background:none;color:var(--accent);font-weight:700}
+.prompt.seq{flex-wrap:wrap;gap:10px;font-size:22px;font-weight:700}
+.blank{display:inline-grid;place-items:center;min-width:64px;padding:2px 12px;border-radius:10px;border:2px dashed var(--accent);color:var(--accent)}
+.dot{color:var(--muted)}
+.hint{margin:10px 2px 0;color:var(--muted);font-size:14px}
+.type-in{margin-top:18px;width:100%;padding:16px;font:inherit;font-size:20px;border-radius:16px;border:2px solid var(--line);background:var(--surface);color:var(--ink)}
+.built{margin-top:18px;min-height:64px;display:flex;flex-wrap:wrap;gap:8px;padding:10px;border-radius:16px;border:2px dashed var(--line);background:var(--surface);align-content:flex-start}
+.type-in.right,.built.right{border-color:var(--good);background:var(--good-bg)}
+.type-in.wrong,.built.wrong{border-color:var(--bad);background:var(--bad-bg)}
+.bank{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.lt{min-width:44px;padding:10px 12px;border-radius:12px;border:2px solid var(--line);border-bottom-width:4px;background:var(--surface);font-weight:700;font-size:18px}
+.lt.used{visibility:hidden}
 /* 재미 요소 */
 #fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:30}
 .stat.lv{color:var(--good)}
@@ -543,7 +564,7 @@ function nextBlitz() {
   if (Date.now() >= LS.end) return finishBlitz();
   const prev = LS.qs[LS.pos]; let k;
   do { k = Math.floor(Math.random() * KO.length); } while (prev && prev.k === k);
-  LS.qs.push({ type: Math.random() < .5 ? "pick" : "rev", k });
+  LS.qs.push({ type: ["pick", "rev", "ox"][Math.floor(Math.random() * 3)], k });
   LS.pos++;
   renderQ();
 }
@@ -582,7 +603,7 @@ let toastT;
 function toast(msg) { const t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, 2600); }
 
 // 소리
-function speak(text, code) {
+function speak(text, code, rate) {
   try {
     const syn = window.speechSynthesis;
     if (!syn) { toast("이 브라우저는 소리 읽기를 지원하지 않아요."); return; }
@@ -591,7 +612,7 @@ function speak(text, code) {
     const v = voices.find(v => v.lang.replace("_", "-").toLowerCase() === code.toLowerCase()) || voices.find(v => v.lang.toLowerCase().startsWith(pre));
     if (voices.length && !v) toast("이 기기에는 이 언어 목소리가 없어요. 읽는 법을 보고 따라 해 보세요.");
     const u = new SpeechSynthesisUtterance(text);
-    u.lang = code; if (v) u.voice = v; u.rate = .85;
+    u.lang = code; if (v) u.voice = v; u.rate = rate || .85;
     syn.cancel(); syn.speak(u);
   } catch (e) {}
 }
@@ -608,6 +629,31 @@ function beep(ok) {
       o.connect(g).connect(actx.destination); o.start(actx.currentTime + i * .1); o.stop(actx.currentTime + i * .1 + .2);
     });
   } catch (e) {}
+}
+
+// 이 기기에 그 언어 목소리가 있는지
+function hasVoice(code) {
+  try { const pre = code.toLowerCase().split("-")[0]; return speechSynthesis.getVoices().some(v => v.lang.replace("_", "-").toLowerCase().startsWith(pre)); } catch (e) { return false; }
+}
+// 쓰기 채점: 대소문자, 악센트, 띄어쓰기, 부호는 따지지 않아요
+const FOLD = { "ł": "l", "ø": "o", "đ": "d", "ð": "d", "æ": "ae", "ı": "i", "ß": "ss", "þ": "th" };
+const norm = s => String(s || "").toLowerCase().replace(/[łøđðæıßþ]/g, c => FOLD[c]).normalize("NFD").replace(/\p{M}/gu, "").replace(/\p{Lm}|[^\p{L}\p{N}]/gu, "");
+const isRight = (s, w) => norm(s) !== "" && (norm(s) === norm(w.w) || (!!w.r && norm(s) === norm(w.r)));
+// 조각 맞추기용 글자 조각
+function chunks(s) {
+  s = s.replace(/\s+/g, "");
+  const g = window.Intl && Intl.Segmenter ? [...new Intl.Segmenter().segment(s)].map(x => x.segment) : Array.from(s);
+  const size = g.length <= 7 ? 1 : g.length <= 14 ? 2 : 3, out = [];
+  for (let i = 0; i < g.length; i += size) out.push(g.slice(i, i + size).join(""));
+  return out;
+}
+function spellTap(lt) {
+  const q = LS.qs[LS.pos], n = +lt.dataset.t;
+  if (lt.parentElement.id === "bank") LS.built.push(n); else LS.built.splice(LS.built.indexOf(n), 1);
+  $("#built").innerHTML = LS.built.map(i => `<button class="lt" data-t="${i}">${esc(q.tiles[i])}</button>`).join("");
+  document.querySelectorAll("#bank .lt").forEach(b => b.classList.toggle("used", LS.built.includes(+b.dataset.t)));
+  LS.sel = LS.built.map(i => q.tiles[i]).join("");
+  $("#action").disabled = !LS.built.length;
 }
 
 // 홈
@@ -678,9 +724,11 @@ let LS = null;
 function startLesson(i) {
   const ws = LESSONS[i].w;
   let qs = [];
-  ws.forEach(k => { qs.push({ type: "pick", k }); qs.push({ type: "rev", k }); });
+  const ex = shuffle(["type", "ox", "spell"].concat(hasVoice(L[cur][0]) ? ["listen"] : []));
+  ws.forEach((k, n) => { qs.push({ type: "pick", k }); qs.push({ type: "rev", k }); qs.push({ type: ex[n % ex.length], k }); });
+  if (ws.some(k => k >= 5 && k <= 7)) qs.push({ type: "seq", k: 5 + Math.floor(Math.random() * 3) });
   qs = shuffle(qs);
-  if (i === LESSONS.length - 1) qs = qs.slice(0, 10);
+  if (i === LESSONS.length - 1) qs = qs.slice(0, 14);
   // 짝 맞추기 4쌍: 이번 단원 단어 + 부족하면 다른 단어
   const extra = shuffle(KO.map((_, k) => k).filter(k => !ws.includes(k)));
   const mk = shuffle(ws).slice(0, 4).concat(extra).slice(0, 4);
@@ -710,6 +758,49 @@ function renderQ() {
     box.innerHTML = `<h3 class="qtitle">${cur}로 고르세요</h3>
       <div class="prompt"><div class="word">${KO[q.k]}</div></div>
       <div class="opts">${q.opts.map((o, n) => `<button class="opt" data-o="${o}" dir="auto"><span class="k">${n + 1}</span>${esc(ws[o].w)}${ws[o].r ? `<small>${esc(ws[o].r)}</small>` : ""}</button>`).join("")}</div>`;
+  } else if (q.type === "ox") {
+    if (q.j === undefined) q.j = Math.random() < .5 ? q.k : shuffle(KO.map((_, j) => j).filter(j => j !== q.k))[0];
+    q.ans = q.j === q.k ? 1 : 0;
+    box.innerHTML = `<h3 class="qtitle">맞을까요, 틀릴까요?</h3>
+      <div class="prompt"><button class="spk" id="say" aria-label="듣기">${SPK}</button><div class="word"><span dir="auto">${esc(ws[q.k].w)}</span>${ws[q.k].r ? `<small>${esc(ws[q.k].r)}</small>` : ""}<span class="eq">= ${KO[q.j]}</span></div></div>
+      <div class="opts ox"><button class="opt o" data-o="1"><span class="k">1</span><span class="big">O</span>맞아요</button><button class="opt x" data-o="0"><span class="k">2</span><span class="big">X</span>아니에요</button></div>`;
+    $("#say").onclick = () => speak(ws[q.k].w, code);
+  } else if (q.type === "listen") {
+    q.opts = q.opts || optsFor(q.k);
+    box.innerHTML = `<h3 class="qtitle">잘 듣고 뜻을 고르세요</h3>
+      <div class="listen"><button class="spk huge" id="say" aria-label="다시 듣기">${SPK}</button><button class="slow" id="slow">천천히 듣기</button></div>
+      <div class="opts">${q.opts.map((o, n) => `<button class="opt" data-o="${o}"><span class="k">${n + 1}</span>${KO[o]}</button>`).join("")}</div>`;
+    $("#say").onclick = () => speak(ws[q.k].w, code);
+    $("#slow").onclick = () => speak(ws[q.k].w, code, .5);
+    speak(ws[q.k].w, code);
+  } else if (q.type === "seq") {
+    q.opts = q.opts || optsFor(q.k);
+    box.innerHTML = `<h3 class="qtitle">빈칸에 들어갈 말은?</h3>
+      <div class="prompt seq">${[5, 6, 7].map(j => j === q.k ? '<span class="blank">?</span>' : `<span dir="auto">${esc(ws[j].w)}</span>`).join('<span class="dot">·</span>')}</div>
+      <p class="hint">${KO[5]} · ${KO[6]} · ${KO[7]}</p>
+      <div class="opts">${q.opts.map((o, n) => `<button class="opt" data-o="${o}" dir="auto"><span class="k">${n + 1}</span>${esc(ws[o].w)}${ws[o].r ? `<small>${esc(ws[o].r)}</small>` : ""}</button>`).join("")}</div>`;
+  } else if (q.type === "type") {
+    const t = ws[q.k];
+    box.innerHTML = `<h3 class="qtitle">${cur}로 직접 써 보세요</h3>
+      <div class="prompt"><div class="word">${KO[q.k]}</div></div>
+      <input id="typeIn" class="type-in" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${t.r ? "읽는 법(로마자)으로 써도 돼요" : "여기에 쓰세요"}">
+      <p class="hint">힌트: 첫 글자는 <b dir="auto">${esc(Array.from(t.r || t.w)[0])}</b> · 악센트와 띄어쓰기는 틀려도 괜찮아요</p>`;
+    const inp = $("#typeIn");
+    inp.oninput = () => { LS.sel = inp.value; act.disabled = !inp.value.trim(); };
+    inp.onkeydown = e => { if (e.key === "Enter") { e.preventDefault(); act.click(); } };
+    setTimeout(() => inp.focus(), 50);
+  } else if (q.type === "spell") {
+    if (!q.tiles) {
+      const parts = chunks(ws[q.k].r || ws[q.k].w);
+      if (parts.length < 2) { q.type = "type"; return renderQ(); }
+      let t; do { t = shuffle(parts); } while (t.join("") === parts.join(""));
+      q.tiles = t;
+    }
+    LS.built = [];
+    box.innerHTML = `<h3 class="qtitle">조각을 순서대로 눌러 단어를 만들어요</h3>
+      <div class="prompt"><div class="word">${KO[q.k]}${ws[q.k].r ? `<small dir="auto">${esc(ws[q.k].w)}</small>` : ""}</div></div>
+      <div class="built" id="built"></div>
+      <div class="bank" id="bank">${q.tiles.map((t, n) => `<button class="lt" data-t="${n}">${esc(t)}</button>`).join("")}</div>`;
   } else {
     const left = shuffle(q.keys), right = shuffle(q.keys);
     box.innerHTML = `<h3 class="qtitle">짝을 맞춰 보세요</h3>
@@ -721,6 +812,8 @@ function renderQ() {
   decorate();
 }
 $("#qbox").addEventListener("click", e => {
+  const lt = e.target.closest(".lt");
+  if (lt) { if (LS.state === "ask") spellTap(lt); return; }
   const b = e.target.closest(".opt"); if (!b || LS.state !== "ask") return;
   const q = LS.qs[LS.pos];
   if (q.type === "match") return matchTap(b);
@@ -728,7 +821,7 @@ $("#qbox").addEventListener("click", e => {
   LS.sel = +b.dataset.o;
   if (LS.mode === "blitz") { check(); return; }
   $("#action").disabled = false;
-  if (q.type === "rev") speak(words(cur)[LS.sel].w, L[cur][0]);
+  if (q.type === "rev" || q.type === "seq") speak(words(cur)[LS.sel].w, L[cur][0]);
 });
 function matchTap(b) {
   const side = b.dataset.side, k = +b.dataset.k, P = LS.pick;
@@ -750,11 +843,14 @@ function matchTap(b) {
 }
 function check() {
   const q = LS.qs[LS.pos], ws = words(cur);
-  const ok = LS.sel === q.k;
+  const want = q.ans !== undefined ? q.ans : q.k;
+  const textQ = q.type === "type" || q.type === "spell";
+  const ok = textQ ? isRight(LS.sel, ws[q.k]) : LS.sel === want;
   document.querySelectorAll("#qbox .opt").forEach(x => {
     const o = +x.dataset.o;
-    if (o === q.k) x.classList.add("right"); else if (o === LS.sel) x.classList.add("wrong");
+    if (o === want) x.classList.add("right"); else if (o === LS.sel) x.classList.add("wrong");
   });
+  if (textQ) { const t = $("#typeIn") || $("#built"); t.classList.add(ok ? "right" : "wrong"); if ($("#typeIn")) $("#typeIn").disabled = true; }
   if (ok) { LS.right++; LS.combo++; if (LS.combo >= 3 && LS.mode !== "blitz") LS.bonus++; }
   else if (LS.mode === "blitz") { LS.wrong++; LS.combo = 0; LS.end -= 3000; }
   else {
@@ -763,8 +859,11 @@ function check() {
     LS.qs.push({ type: q.type, k: q.k }); // 틀린 문제는 끝에 한 번 더
   }
   beep(ok);
-  const ans = q.type === "pick" ? `${ws[q.k].w} = ${KO[q.k]}` : `${KO[q.k]} = ${ws[q.k].w}${ws[q.k].r ? ` (${ws[q.k].r})` : ""}`;
-  feedback(ok, ans);
+  const fw = `${ws[q.k].w}${ws[q.k].r ? ` (${ws[q.k].r})` : ""}`;
+  const msg = q.type === "pick" || q.type === "listen" ? `${fw} = ${KO[q.k]}`
+    : q.type === "ox" ? `${ws[q.k].w} = ${KO[q.k]}${q.j === q.k ? "" : ` (${KO[q.j]} 아니에요)`}`
+    : `${KO[q.k]} = ${fw}`;
+  feedback(ok, msg);
 }
 const PRAISE = ["잘했어요!", "정답이에요!", "멋져요!", "완벽해요!"];
 function feedback(ok, ans) {
