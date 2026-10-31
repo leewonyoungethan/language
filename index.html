@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>말모이 언어학교</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* Layout: 한 줄짜리 앱 화면(최대 560px) — 언어 고르기 → 단원 길 → 문제 카드 + 아래 고정 버튼 */
+:root{
+  --bg:#EEF3F8; --surface:#FFFFFF; --ink:#18213A; --muted:#5D6B86; --line:#D5DDEA;
+  --accent:#2F5BEA; --accent-deep:#1E3DAA; --on-accent:#FFFFFF;
+  --gold:#F2A900; --gold-deep:#B97C00;
+  --good:#1F9D55; --good-bg:#DDF5E6; --bad:#D93A45; --bad-bg:#FBE1E3;
+  --locked:#C3CCDA; --locked-deep:#9AA6BA;
+  --display:"Jua","IBM Plex Sans KR",system-ui,sans-serif;
+  --body:"IBM Plex Sans KR",system-ui,-apple-system,"Segoe UI","Noto Sans",sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0F1524; --surface:#18203A; --ink:#E8EDF7; --muted:#9AA8C4; --line:#2A3555;
+    --accent:#7090FF; --accent-deep:#3F5CCB; --on-accent:#0B1020;
+    --gold:#FFC23D; --gold-deep:#B9860F;
+    --good:#43D184; --good-bg:#12351F; --bad:#FF6B75; --bad-bg:#3A1519;
+    --locked:#34405E; --locked-deep:#242D45;
+    color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--body);-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.app{max-width:560px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:calc(16px + env(safe-area-inset-top,0px)) 140px}
+h1,h2,h3{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance;line-height:1.2}
+
+/* 상단 상태줄 */
+.topbar{display:flex;align-items:center;gap:12px;justify-content:space-between}
+.brand{font-family:var(--display);font-size:26px;color:var(--accent)}
+.stats{display:flex;gap:14px;font-weight:700;font-variant-numeric:tabular-nums}
+.stat{display:flex;align-items:center;gap:5px}
+.stat svg{width:20px;height:20px}
+.stat.fire{color:var(--gold-deep)} .stat.xp{color:var(--accent)} .stat.heart{color:var(--bad)}
+@media (prefers-color-scheme: dark){ .stat.fire{color:var(--gold)} }
+
+/* 홈 */
+.hero{margin-top:22px;display:grid;gap:6px}
+.hero h1{font-size:30px}
+.hero p{margin:0;color:var(--muted)}
+.notice{margin-top:14px;padding:12px 14px;border-radius:14px;background:var(--surface);border:2px solid var(--line);color:var(--muted);font-size:14px}
+.notice b{color:var(--ink)}
+.continue{margin-top:14px;display:flex;align-items:center;gap:12px;padding:14px;border-radius:16px;background:var(--accent);color:var(--on-accent);border:0;border-bottom:4px solid var(--accent-deep);width:100%;text-align:left}
+.continue .big{font-family:var(--display);font-size:20px}
+.continue small{display:block;opacity:.85}
+.continue .go{margin-left:auto;font-family:var(--display);font-size:22px}
+.search{margin-top:18px;width:100%;padding:12px 14px;font:inherit;border-radius:14px;border:2px solid var(--line);background:var(--surface);color:var(--ink)}
+.chips{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.chip{padding:7px 12px;border-radius:999px;border:2px solid var(--line);background:var(--surface);font-weight:700;font-size:13px;letter-spacing:.02em}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.grid{margin-top:14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.lang{display:grid;gap:2px;text-align:left;padding:12px;border-radius:14px;background:var(--surface);border:2px solid var(--line);border-bottom-width:4px;min-width:0}
+.lang .nm{font-weight:700;overflow-wrap:anywhere}
+.lang .hi{font-size:13px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lang .bar{height:6px;border-radius:6px;background:var(--line);margin-top:6px;overflow:hidden}
+.lang .bar i{display:block;height:100%;background:var(--gold)}
+.lang.soon{opacity:.6;border-bottom-width:2px}
+.lang.soon .hi{font-style:normal}
+.lang:not(.soon):hover{border-color:var(--accent)}
+.empty{color:var(--muted);padding:20px 0}
+
+/* 코스 */
+.back{border:0;background:none;font-family:var(--display);font-size:18px;color:var(--muted);padding:6px 0}
+.course-head{margin-top:8px;display:grid;gap:4px}
+.course-head h2{font-size:30px}
+.course-head p{margin:0;color:var(--muted)}
+.path{margin:26px 0 10px;display:grid;gap:22px;justify-items:center}
+.node{display:grid;justify-items:center;gap:6px}
+.node button{width:76px;height:70px;border-radius:50%;border:0;font-family:var(--display);font-size:26px;color:var(--on-accent);background:var(--accent);box-shadow:0 6px 0 var(--accent-deep);transition:transform .1s}
+.node button:active{transform:translateY(4px);box-shadow:0 2px 0 var(--accent-deep)}
+.node.done button{background:var(--gold);box-shadow:0 6px 0 var(--gold-deep);color:#3A2600}
+.node.locked button{background:var(--locked);box-shadow:0 6px 0 var(--locked-deep);color:var(--muted)}
+.node.current button{animation:bob 1.6s ease-in-out infinite}
+.node .lbl{font-weight:700;text-align:center;line-height:1.3}
+.node .lbl small{display:block;font-weight:400;color:var(--muted)}
+@keyframes bob{50%{transform:translateY(-5px)}}
+.words{margin-top:28px;background:var(--surface);border-radius:18px;border:2px solid var(--line);overflow:hidden}
+.words h3{font-size:20px;padding:14px 16px 6px}
+.wrow{display:grid;grid-template-columns:84px 1fr auto;gap:10px;align-items:center;padding:10px 16px;border-top:1px solid var(--line)}
+.wrow .ko{color:var(--muted);font-size:14px}
+.wrow .fw{font-weight:700;min-width:0;overflow-wrap:anywhere}
+.wrow .fw small{display:block;font-weight:400;color:var(--muted)}
+.spk{width:38px;height:38px;border-radius:12px;border:2px solid var(--line);background:var(--bg);display:grid;place-items:center;color:var(--accent)}
+.spk svg{width:20px;height:20px}
+
+/* 레슨 */
+.lhead{display:flex;align-items:center;gap:12px}
+.x{border:0;background:none;font-size:26px;line-height:1;color:var(--muted);padding:4px}
+.progress{flex:1;height:16px;border-radius:10px;background:var(--line);overflow:hidden}
+.progress i{display:block;height:100%;width:0;background:var(--good);border-radius:10px;transition:width .35s}
+.qtitle{margin-top:26px;font-size:24px}
+.prompt{margin-top:18px;display:flex;align-items:center;gap:14px;padding:16px;border-radius:18px;background:var(--surface);border:2px solid var(--line)}
+.prompt .word{font-size:28px;font-weight:700;line-height:1.25;min-width:0;overflow-wrap:anywhere}
+.prompt .word small{display:block;font-size:15px;font-weight:400;color:var(--muted)}
+.prompt .spk{width:52px;height:52px;flex:none;background:var(--accent);border-color:var(--accent-deep);color:var(--on-accent)}
+.opts{margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt{position:relative;padding:16px 12px 14px;border-radius:16px;border:2px solid var(--line);border-bottom-width:4px;background:var(--surface);text-align:center;font-weight:700;font-size:17px;min-width:0;overflow-wrap:anywhere}
+.opt small{display:block;font-weight:400;font-size:13px;color:var(--muted)}
+.opt .k{position:absolute;top:6px;left:9px;font-size:11px;color:var(--muted);font-weight:500}
+.opt[aria-pressed="true"]{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,var(--surface))}
+.opt.right{border-color:var(--good);background:var(--good-bg)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-bg)}
+.match{margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.match .col{display:grid;gap:10px;align-content:start}
+.match .opt.gone{opacity:.35;pointer-events:none;border-bottom-width:2px}
+.shake{animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+.foot{position:fixed;left:0;right:0;bottom:0;background:var(--bg);border-top:2px solid var(--line);padding-top:14px;padding-bottom:calc(14px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.foot.ok{background:var(--good-bg);border-color:transparent}
+.foot.no{background:var(--bad-bg);border-color:transparent}
+.foot-in{max-width:560px;margin:0 auto;display:grid;gap:10px}
+.fb{font-family:var(--display);font-size:22px}
+.foot.ok .fb{color:var(--good)} .foot.no .fb{color:var(--bad)}
+.fb small{display:block;font-family:var(--body);font-size:15px;color:var(--ink)}
+.btn{width:100%;padding:14px;border-radius:16px;border:0;font-family:var(--display);font-size:20px;letter-spacing:.03em;background:var(--accent);color:var(--on-accent);box-shadow:0 4px 0 var(--accent-deep)}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--accent-deep)}
+.btn:disabled{background:var(--locked);color:var(--muted);box-shadow:0 4px 0 var(--locked-deep);cursor:default}
+.foot.ok .btn{background:var(--good);box-shadow:0 4px 0 color-mix(in srgb,var(--good) 60%,#000)}
+.foot.no .btn{background:var(--bad);box-shadow:0 4px 0 color-mix(in srgb,var(--bad) 60%,#000)}
+.btn.ghost{background:var(--surface);color:var(--ink);box-shadow:0 4px 0 var(--line);border:2px solid var(--line)}
+
+/* 결과 */
+.result{margin-top:12vh;display:grid;gap:18px;text-align:center;justify-items:center}
+.result h2{font-size:34px}
+.result p{margin:0;color:var(--muted)}
+.medal{width:120px;height:120px;border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-size:46px;background:var(--gold);color:#3A2600;box-shadow:0 8px 0 var(--gold-deep)}
+.medal.fail{background:var(--bad-bg);color:var(--bad);box-shadow:0 8px 0 var(--bad)}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%}
+.tile{padding:12px 8px;border-radius:14px;border:2px solid var(--line);background:var(--surface)}
+.tile b{display:block;font-family:var(--display);font-size:24px;font-variant-numeric:tabular-nums}
+.tile span{font-size:12px;color:var(--muted);letter-spacing:.04em}
+
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);max-width:min(92vw,460px);background:var(--ink);color:var(--bg);padding:12px 16px;border-radius:14px;font-size:14px;z-index:20}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:380px){.opts{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">말모이</div>
+    <div class="stats">
+      <span class="stat fire" title="연속 학습일"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 4-3 5-3 9a3 3 0 0 0 6 0c0-1-.5-2-1-3 3 1 5 4 5 7a7 7 0 0 1-14 0c0-6 6-8 7-13z"/></svg><b id="streak">0</b></span>
+      <span class="stat xp" title="경험치"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg><b id="xp">0</b></span>
+    </div>
+  </header>
+
+  <!-- 홈 -->
+  <main id="home">
+    <section class="hero">
+      <h1>오늘은 어떤 말을 배울까요?</h1>
+      <p>하루 5분, 인사부터 숫자까지 차근차근 배워요.</p>
+    </section>
+    <div id="cont"></div>
+    <p class="notice" id="notice"></p>
+    <input id="search" class="search" type="search" placeholder="언어 이름으로 찾기 (예: 스와힐리어)" autocomplete="off">
+    <div class="chips" role="group" aria-label="보기">
+      <button class="chip" id="fReady" aria-pressed="true"></button>
+      <button class="chip" id="fAll" aria-pressed="false"></button>
+    </div>
+    <div class="grid" id="grid"></div>
+  </main>
+
+  <!-- 코스 -->
+  <main id="course" hidden>
+    <button class="back" id="toHome">← 언어 고르기</button>
+    <div class="course-head">
+      <h2 id="cName"></h2>
+      <p id="cInfo"></p>
+    </div>
+    <div class="path" id="path"></div>
+    <section class="words">
+      <h3>단어장</h3>
+      <div id="wlist"></div>
+    </section>
+  </main>
+
+  <!-- 레슨 -->
+  <main id="lesson" hidden>
+    <div class="lhead">
+      <button class="x" id="quit" aria-label="레슨 그만하기">✕</button>
+      <div class="progress"><i id="prog"></i></div>
+      <span class="stat heart" title="하트"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-8-5.2-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.8-8 11-8 11z"/></svg><b id="hearts">5</b></span>
+    </div>
+    <div id="qbox"></div>
+  </main>
+
+  <!-- 결과 -->
+  <main id="result" hidden>
+    <div class="result" id="rbox"></div>
+  </main>
+</div>
+
+<footer class="foot" id="foot" hidden>
+  <div class="foot-in">
+    <div class="fb" id="fb" hidden></div>
+    <button class="btn" id="action" disabled>확인</button>
+  </div>
+</footer>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+// 사용자가 준 언어 목록 전체
+const ALL_NAMES = `가리푸나어, 가어, 가가우즈어, 가요어, 간다어, 간어, 갈리시아어, 그으즈어, 고려말, 교회 라틴어, 교회 슬라브어, 곤드어, 과들루프 크리올, 과라니어, 관체어, 광둥어, 구니가미어, 구자라트어, 그레보어, 그리스어, 그린란드어, 그바야어, 길라키어, 나바호어, 나와어, 나우루어, 나우아틀어, 나폴리어, 남아제르바이잔어, 네덜란드어, 네덜란드 저지 독일어, 네와르어, 네팔어, 노가이어, 노르웨이어, 뉘노르스크, 눠쑤어, 니안자어, 니암웨지어, 니오로어, 니우에어, 다르과어, 다리어, 다자어, 다야크어, 대만 관화, 덴마크어, 델라웨어어, 도그리어, 도그리브어, 독일어, 두알라어, 둥간어, 듈라어, 디베히어, 딩카어, 라디노어, 라딘어, 라로통가어, 라오어, 라이바바에어, 라자스탄어, 라트비아어, 라틴어, 라파누이어, 라푸아리아어, 란다어, 람바어, 러시아어, 레즈긴어, 로만슈어, 로지어, 롬바르디아어, 롬어, 루런어, 루마니아어, 루바룰루아어, 루바카탕가어, 루샤이어, 루신어, 루오어, 루이세뇨어, 룩셈부르크어, 룬다어, 룬디어, 룰레 사미어, 룽자어, 르완다어, 리투아니아어, 림뷔르흐어, 링갈라어, 마가히어, 마니푸르어, 마두라어, 마라티어, 마르와르어, 마르키즈어, 마리어, 마사이어, 마셜어, 마오리어, 마이틸리어, 마카사르어, 마케도니아어, 마푸둥군어, 만다르어, 만데어, 만주어, 말라가시어, 말라얄람어, 말레이어, 말레이시아 북경어, 망가레바어, 매사추세츠어, 맨어, 멘데어, 모리셔스 크리올어, 모시어, 모호크어, 목샤어, 몰도바어, 몰타어, 몽골어, 몽어, 무스코지어, 미낭카바우어, 미란다어, 미케네 그리스어, 미크맥어, 민난어, 민어(언어), 바뉴마스어, 바바리아어, 바사어, 바이어, 바스크어, 바시키르어, 반다어, 반달어, 발루치어, 발리어, 밤바라어, 버로어, 버마어, 베다 산스크리트어, 베르티어, 베자어, 베트남 문학 중국, 베트남어, 벤다어, 벨라루스어, 벰바어, 벵골어, 보스니아어, 보지푸리어, 보크몰, 보트어, 부기어, 부리아트어, 불가리아어, 브라지어, 브르타뉴어, 블랙풋어, 블린어, 비니어, 비슐라마어, 비콜어, 비하르어, 사르데냐어, 사마리아 아람어, 사모기티아어, 사모아어, 사사크어, 사포텍어, 산다웨어, 산스크리트어, 산탈어, 상고어, 상고 한어, 샤이엔어, 샤크어, 샨어, 샹어, 서아르메니아어, 세네카어, 세레르어, 세르비아어, 세부아노어, 세이셸 크리올, 센티널어, 셀쿠프어, 소그드어, 소르브어, 소말리어, 소토어, 손소롤어, 송가이어, 쇼나어, 수어, 수메르어, 수수어, 수쿠마어, 수화, 순다어, 스와티어, 스와힐리어, 스웨덴어, 스코트어, 스코틀랜드 게일어, 스페인어, 슬레이비어, 슬로바키아어, 슬로베니아어, 시다모어, 시리아어, 시칠리아어, 신디어, 싱가포르 북경어, 싱할라어, 아당메어, 아디게어, 아라곤어, 아라왁어, 아라우칸어, 아라파호어, 아람어, 아랍어, 아로마니아어, 아르메니아어, 아마미어, 아바르어, 아베스타어, 아삼어, 아스투리아스어, 아와드어, 아이누어, 아이마라어, 아이슬란드어, 아이티 크리올어, 아일랜드어, 아제르바이잔어, 아체어, 아촐리어, 아칸어, 아티카메쿠어, 아파르어, 아프리칸스어, 아프리힐리어, 알레만어, 알류트어, 알바니아어, 알제리 아랍어, 암하라어, 압하스어, 야오어, 야에야마어, 야쿠트어, 야프어, 에르지아어, 에스토니아어, 에야크어, 에원도어, 에웨어, 에카주크어, 에피크어, 엘람어, 영어, 오네이다어, 오논다가어, 오로모어, 오리야어, 오세이지어, 오세트어, 오스트랄어, 오지브와어, 오크어, 오키나와어, 요나구니어, 와라이어, 와샹어, 와쇼어, 왈라모어, 왈롱어, 왈리스어, 요루바어, 우가리트어, 우드무르트어, 우르두어, 우어, 우즈베크어, 우크라이나어, 움분두어, 월로프어, 웨일스어, 위구르어, 유대 아람어, 은데벨레어, 은동가어, 은제마어, 은콜레어, 응가나산어, 이누크티투트어, 이누피아크어, 이디시어, 이반어, 이보어, 이조어, 이집트 아랍어, 이탈리아어, 인구시어, 인도네시아어, 일로코어, 일본어, 자가와어, 자르마어, 자와어, 잔데어, 재일한국어, 저지 독일어, 저지 색슨어, 제나가어, 제주어, 조지아어, 종카어, 좡어, 주니어, 줄루어, 중국어, 중국조선어, 징포어, 차가타이어, 차모로어, 차바카노어, 차이자어, 체로키어, 체첸어, 체코어, 촉토어, 총가어, 추바슈어, 추크어, 츠와나어, 치누크 통상어, 치브차어, 치페위안어, 침시아어, 카누리어, 카넴부어, 카도어, 카라차이발카르어, 카라칼파크어, 카렌어, 카리브어, 카바르디아어, 카빌어, 카슈미르어, 카슈브어, 카슈비아어, 카시어, 카유가어, 카위어, 카자흐어, 카친어, 카탈루냐어, 칸나다어, 칼리나어, 칼미크어, 캄바어, 케추아어, 코만치어, 코르시카어, 코미어, 코사어, 코스라에어, 콘월어, 콘칸어, 콩고어, 콰냐마어, 쾰른어, 쿠루흐어, 쿠르드어, 쿠르만지어, 쿠미크어, 쿠테나이어, 크로아티아어, 크리올어, 크리어, 크림 타타르어, 크메르어, 크펠레어, 클링온어, 키냐르완다어, 키르기스어, 키리바시어, 키쿠유어, 타갈로그어, 타라슈케비차, 타란토어, 타마셰크어, 타마지트어, 타밀어, 타지크어, 타체히트어, 타타르어, 타히티어, 태국어, 튀르키예어, 테다어, 테레나어, 테툼어, 텔루구어, 템네어, 토비안어, 토스크 알바니아어, 토켈라우어, 토하라어, 톡 피신, 통가어, 통아어, 투르크멘어, 투발루어, 투바어, 투스카로라어, 투아모투어, 툼부카어, 트위어, 틀링깃어, 티그레어, 티그리냐어, 티베트어, 티브어, 파슈토어, 파투아어, 파피아멘토어, 판티어, 팔라우어, 팔레비어, 팔리어, 팜팡가어, 팡가시난어, 팡어, 펀자브어, 페로어, 페르시아어, 펜실베이니아 독일어, 포르투갈어, 폰어, 폰페이어, 푸투나어, 폴란드어, 풀라어, 프랑스어, 피지어, 피지 힌디어, 핀란드어, 필리핀어, 필리핀 북경, 핏케언어, 하와이어, 하우사어, 하이다어, 하치조어, 하카어, 한국어, 한문, 헝가리어, 헤레로어, 호탄어, 후파어, 히리 모투, 히마찰어, 히브리어, 힌디어, 힐리가이노어`.split(",").map(s => s.trim()).filter(Boolean);
+
+// 배울 단어 10개 (순서 고정)
+const KO = ["안녕하세요", "고마워요", "네", "아니요", "물", "하나", "둘", "셋", "엄마", "잘 가요"];
+
+// 단원: 어떤 단어를 배우는지
+const LESSONS = [
+  { t: "인사", d: "만나고 헤어질 때", w: [0, 1, 9] },
+  { t: "대답", d: "네와 아니요", w: [2, 3] },
+  { t: "숫자", d: "하나, 둘, 셋", w: [5, 6, 7] },
+  { t: "생활", d: "물과 엄마", w: [4, 8] },
+  { t: "총복습", d: "배운 단어 모두", w: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] }
+];
+
+// [음성 코드, 단어 10개] — "글자|읽는 법"
+const L = {
+  "영어": ["en-US","Hello","Thank you","Yes","No","Water","One","Two","Three","Mother","Goodbye"],
+  "스페인어": ["es-ES","Hola","Gracias","Sí","No","Agua","Uno","Dos","Tres","Madre","Adiós"],
+  "프랑스어": ["fr-FR","Bonjour","Merci","Oui","Non","Eau","Un","Deux","Trois","Mère","Au revoir"],
+  "독일어": ["de-DE","Hallo","Danke","Ja","Nein","Wasser","Eins","Zwei","Drei","Mutter","Tschüss"],
+  "이탈리아어": ["it-IT","Ciao","Grazie","Sì","No","Acqua","Uno","Due","Tre","Madre","Arrivederci"],
+  "포르투갈어": ["pt-BR","Olá","Obrigado","Sim","Não","Água","Um","Dois","Três","Mãe","Tchau"],
+  "네덜란드어": ["nl-NL","Hallo","Dank je","Ja","Nee","Water","Een","Twee","Drie","Moeder","Doei"],
+  "스웨덴어": ["sv-SE","Hej","Tack","Ja","Nej","Vatten","Ett","Två","Tre","Mamma","Hej då"],
+  "노르웨이어": ["nb-NO","Hei","Takk","Ja","Nei","Vann","En","To","Tre","Mor","Ha det"],
+  "덴마크어": ["da-DK","Hej","Tak","Ja","Nej","Vand","En","To","Tre","Mor","Farvel"],
+  "핀란드어": ["fi-FI","Hei","Kiitos","Kyllä","Ei","Vesi","Yksi","Kaksi","Kolme","Äiti","Näkemiin"],
+  "아이슬란드어": ["is-IS","Halló","Takk","Já","Nei","Vatn","Einn","Tveir","Þrír","Móðir","Bless"],
+  "폴란드어": ["pl-PL","Cześć","Dziękuję","Tak","Nie","Woda","Jeden","Dwa","Trzy","Matka","Do widzenia"],
+  "체코어": ["cs-CZ","Ahoj","Děkuji","Ano","Ne","Voda","Jedna","Dva","Tři","Matka","Na shledanou"],
+  "슬로바키아어": ["sk-SK","Ahoj","Ďakujem","Áno","Nie","Voda","Jeden","Dva","Tri","Matka","Dovidenia"],
+  "러시아어": ["ru-RU","Привет|privet","Спасибо|spasibo","Да|da","Нет|net","Вода|voda","Один|odin","Два|dva","Три|tri","Мама|mama","До свидания|do svidaniya"],
+  "우크라이나어": ["uk-UA","Привіт|pryvit","Дякую|dyakuyu","Так|tak","Ні|ni","Вода|voda","Один|odyn","Два|dva","Три|try","Мама|mama","До побачення|do pobachennya"],
+  "벨라루스어": ["be-BY","Прывітанне|pryvitannie","Дзякуй|dziakuj","Так|tak","Не|nie","Вада|vada","Адзін|adzin","Два|dva","Тры|try","Маці|maci","Да пабачэння|da pabačennia"],
+  "불가리아어": ["bg-BG","Здравей|zdravey","Благодаря|blagodarya","Да|da","Не|ne","Вода|voda","Едно|edno","Две|dve","Три|tri","Майка|mayka","Довиждане|dovizhdane"],
+  "세르비아어": ["sr-RS","Здраво|zdravo","Хвала|hvala","Да|da","Не|ne","Вода|voda","Један|jedan","Два|dva","Три|tri","Мајка|majka","Довиђења|doviđenja"],
+  "크로아티아어": ["hr-HR","Bok","Hvala","Da","Ne","Voda","Jedan","Dva","Tri","Majka","Doviđenja"],
+  "슬로베니아어": ["sl-SI","Živijo","Hvala","Da","Ne","Voda","Ena","Dva","Tri","Mama","Nasvidenje"],
+  "마케도니아어": ["mk-MK","Здраво|zdravo","Благодарам|blagodaram","Да|da","Не|ne","Вода|voda","Еден|eden","Два|dva","Три|tri","Мајка|majka","Довидување|doviduvanje"],
+  "알바니아어": ["sq-AL","Përshëndetje","Faleminderit","Po","Jo","Ujë","Një","Dy","Tre","Nënë","Mirupafshim"],
+  "루마니아어": ["ro-RO","Bună","Mulțumesc","Da","Nu","Apă","Unu","Doi","Trei","Mamă","La revedere"],
+  "헝가리어": ["hu-HU","Szia","Köszönöm","Igen","Nem","Víz","Egy","Kettő","Három","Anya","Viszlát"],
+  "그리스어": ["el-GR","Γεια σου|geia sou","Ευχαριστώ|efcharistó","Ναι|nai","Όχι|óchi","Νερό|neró","Ένα|éna","Δύο|dýo","Τρία|tría","Μητέρα|mitéra","Αντίο|antío"],
+  "튀르키예어": ["tr-TR","Merhaba","Teşekkürler","Evet","Hayır","Su","Bir","İki","Üç","Anne","Hoşça kal"],
+  "아랍어": ["ar-SA","مرحبا|marhaban","شكرا|shukran","نعم|naʿam","لا|lā","ماء|māʾ","واحد|wāḥid","اثنان|ithnān","ثلاثة|thalātha","أم|umm","مع السلامة|maʿa as-salāma"],
+  "히브리어": ["he-IL","שלום|shalom","תודה|toda","כן|ken","לא|lo","מים|mayim","אחת|achat","שתיים|shtayim","שלוש|shalosh","אמא|ima","להתראות|lehitraot"],
+  "페르시아어": ["fa-IR","سلام|salâm","ممنون|mamnun","بله|bale","نه|na","آب|âb","یک|yek","دو|do","سه|se","مادر|mâdar","خداحافظ|khodâhâfez"],
+  "힌디어": ["hi-IN","नमस्ते|namaste","धन्यवाद|dhanyavaad","हाँ|haan","नहीं|nahin","पानी|paani","एक|ek","दो|do","तीन|teen","माँ|maa","अलविदा|alvida"],
+  "우르두어": ["ur-PK","السلام علیکم|assalam-o-alaikum","شکریہ|shukriya","ہاں|haan","نہیں|nahin","پانی|paani","ایک|ek","دو|do","تین|teen","ماں|maan","خدا حافظ|khuda hafiz"],
+  "벵골어": ["bn-IN","নমস্কার|nomoshkar","ধন্যবাদ|dhonnobad","হ্যাঁ|hyan","না|na","জল|jol","এক|ek","দুই|dui","তিন|tin","মা|ma","বিদায়|biday"],
+  "네팔어": ["ne-NP","नमस्ते|namaste","धन्यवाद|dhanyabad","हो|ho","होइन|hoina","पानी|pani","एक|ek","दुई|dui","तीन|tin","आमा|ama","फेरि भेटौँला|pheri bhetaunla"],
+  "타밀어": ["ta-IN","வணக்கம்|vanakkam","நன்றி|nandri","ஆம்|aam","இல்லை|illai","தண்ணீர்|thanneer","ஒன்று|ondru","இரண்டு|irandu","மூன்று|moondru","அம்மா|amma","போய் வருகிறேன்|poi varugiren"],
+  "산스크리트어": ["sa-IN","नमस्ते|namaste","धन्यवादः|dhanyavādaḥ","आम्|ām","न|na","जलम्|jalam","एकम्|ekam","द्वे|dve","त्रीणि|trīṇi","माता|mātā","पुनर्दर्शनाय|punardarśanāya"],
+  "태국어": ["th-TH","สวัสดี|sawatdi","ขอบคุณ|khop khun","ใช่|chai","ไม่|mai","น้ำ|nam","หนึ่ง|nueng","สอง|song","สาม|sam","แม่|mae","ลาก่อน|la kon"],
+  "베트남어": ["vi-VN","Xin chào","Cảm ơn","Vâng","Không","Nước","Một","Hai","Ba","Mẹ","Tạm biệt"],
+  "인도네시아어": ["id-ID","Halo","Terima kasih","Ya","Tidak","Air","Satu","Dua","Tiga","Ibu","Selamat tinggal"],
+  "말레이어": ["ms-MY","Helo","Terima kasih","Ya","Tidak","Air","Satu","Dua","Tiga","Ibu","Selamat tinggal"],
+  "타갈로그어": ["fil-PH","Kumusta","Salamat","Oo","Hindi","Tubig","Isa","Dalawa","Tatlo","Nanay","Paalam"],
+  "일본어": ["ja-JP","こんにちは|konnichiwa","ありがとう|arigatō","はい|hai","いいえ|iie","水|mizu","一|ichi","二|ni","三|san","母|haha","さようなら|sayōnara"],
+  "중국어": ["zh-CN","你好|nǐ hǎo","谢谢|xièxie","是|shì","不|bù","水|shuǐ","一|yī","二|èr","三|sān","妈妈|māma","再见|zàijiàn"],
+  "광둥어": ["zh-HK","你好|nei5 hou2","多謝|do1 ze6","係|hai6","唔係|m4 hai6","水|seoi2","一|jat1","二|ji6","三|saam1","媽媽|maa4 maa1","再見|zoi3 gin3"],
+  "한국어": ["ko-KR","안녕하세요|annyeonghaseyo","고마워요|gomawoyo","네|ne","아니요|aniyo","물|mul","하나|hana","둘|dul","셋|set","엄마|eomma","잘 가요|jal gayo"],
+  "몽골어": ["mn-MN","Сайн байна уу|sain baina uu","Баярлалаа|bayarlalaa","Тийм|tiim","Үгүй|ügüi","Ус|us","Нэг|neg","Хоёр|khoyor","Гурав|gurav","Ээж|eej","Баяртай|bayartai"],
+  "카자흐어": ["kk-KZ","Сәлем|sälem","Рахмет|rakhmet","Иә|iä","Жоқ|zhoq","Су|su","Бір|bir","Екі|eki","Үш|üsh","Ана|ana","Сау бол|sau bol"],
+  "우즈베크어": ["uz-UZ","Salom","Rahmat","Ha","Yoʻq","Suv","Bir","Ikki","Uch","Ona","Xayr"],
+  "조지아어": ["ka-GE","გამარჯობა|gamarjoba","მადლობა|madloba","კი|k'i","არა|ara","წყალი|ts'q'ali","ერთი|erti","ორი|ori","სამი|sami","დედა|deda","ნახვამდის|nakhvamdis"],
+  "아르메니아어": ["hy-AM","Բարև|barev","Շնորհակալություն|shnorhakalutyun","Այո|ayo","Ոչ|voch","Ջուր|jur","Մեկ|mek","Երկու|yerku","Երեք|yerek","Մայր|mayr","Ցտեսություն|tstesutyun"],
+  "스와힐리어": ["sw-KE","Jambo","Asante","Ndiyo","Hapana","Maji","Moja","Mbili","Tatu","Mama","Kwaheri"],
+  "줄루어": ["zu-ZA","Sawubona","Ngiyabonga","Yebo","Cha","Amanzi","Kunye","Kubili","Kuthathu","Umama","Sala kahle"],
+  "하우사어": ["ha-NG","Sannu","Na gode","I","A'a","Ruwa","Ɗaya","Biyu","Uku","Uwa","Sai an jima"],
+  "암하라어": ["am-ET","ሰላም|selam","አመሰግናለሁ|ameseginalehu","አዎ|awo","አይ|ay","ውሃ|wiha","አንድ|and","ሁለት|hulet","ሦስት|sost","እናት|enat","ደህና ሁን|dehna hun"],
+  "아프리칸스어": ["af-ZA","Hallo","Dankie","Ja","Nee","Water","Een","Twee","Drie","Ma","Totsiens"],
+  "웨일스어": ["cy-GB","Helo","Diolch","Ie","Na","Dŵr","Un","Dau","Tri","Mam","Hwyl fawr"],
+  "아일랜드어": ["ga-IE","Dia duit","Go raibh maith agat","Sea","Ní hea","Uisce","A haon","A dó","A trí","Máthair","Slán"],
+  "스코틀랜드 게일어": ["gd-GB","Halò","Tapadh leat","Tha","Chan eil","Uisge","Aon","Dhà","Trì","Màthair","Mar sin leat"],
+  "에스토니아어": ["et-EE","Tere","Aitäh","Jah","Ei","Vesi","Üks","Kaks","Kolm","Ema","Head aega"],
+  "라트비아어": ["lv-LV","Sveiki","Paldies","Jā","Nē","Ūdens","Viens","Divi","Trīs","Māte","Uz redzēšanos"],
+  "리투아니아어": ["lt-LT","Labas","Ačiū","Taip","Ne","Vanduo","Vienas","Du","Trys","Mama","Viso gero"],
+  "라틴어": ["la","Salve","Gratias","Ita","Minime","Aqua","Unus","Duo","Tres","Mater","Vale"],
+  "카탈루냐어": ["ca-ES","Hola","Gràcies","Sí","No","Aigua","Un","Dos","Tres","Mare","Adéu"],
+  "바스크어": ["eu-ES","Kaixo","Eskerrik asko","Bai","Ez","Ura","Bat","Bi","Hiru","Ama","Agur"],
+  "갈리시아어": ["gl-ES","Ola","Grazas","Si","Non","Auga","Un","Dous","Tres","Nai","Adeus"],
+  "룩셈부르크어": ["lb-LU","Moien","Merci","Jo","Neen","Waasser","Eent","Zwee","Dräi","Mamm","Äddi"],
+  "몰타어": ["mt-MT","Merħba","Grazzi","Iva","Le","Ilma","Wieħed","Tnejn","Tlieta","Omm","Saħħa"],
+  "이디시어": ["yi","שלום|sholem","אַ דאַנק|a dank","יאָ|yo","ניין|neyn","וואַסער|vaser","איינס|eyns","צוויי|tsvey","דרײַ|dray","מאַמע|mame","זײַ געזונט|zay gezunt"],
+  "하와이어": ["haw","Aloha","Mahalo","ʻAe","ʻAʻole","Wai","ʻEkahi","ʻElua","ʻEkolu","Makuahine","A hui hou"],
+  "마오리어": ["mi-NZ","Kia ora","Ngā mihi","Āe","Kāo","Wai","Tahi","Rua","Toru","Whaea","Haere rā"],
+  "클링온어": ["tlh","nuqneH","qatlho'","HIja'","ghobe'","bIQ","wa'","cha'","wej","SoS","Qapla'"]
+};
+
+const $ = s => document.querySelector(s);
+const READY = ALL_NAMES.filter(n => L[n]);
+const words = n => L[n].slice(1).map(s => { const [w, r] = s.split("|"); return { w, r: r || "" }; });
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const SPK = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+
+// 저장
+const KEY = "malmoi-v1";
+function load() { try { return Object.assign({ xp: 0, streak: 0, last: "", done: {}, recent: "" }, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch (e) { return { xp: 0, streak: 0, last: "", done: {}, recent: "" }; } }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+let S = load();
+const dayStr = d => d.toISOString().slice(0, 10);
+
+function show(id) {
+  ["home", "course", "lesson", "result"].forEach(x => $("#" + x).hidden = x !== id);
+  $("#foot").hidden = id !== "lesson";
+  window.scrollTo(0, 0);
+}
+function stats() { $("#xp").textContent = S.xp; $("#streak").textContent = S.streak; }
+let toastT;
+function toast(msg) { const t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, 2600); }
+
+// 소리
+function speak(text, code) {
+  try {
+    const syn = window.speechSynthesis;
+    if (!syn) { toast("이 브라우저는 소리 읽기를 지원하지 않아요."); return; }
+    const pre = code.toLowerCase().split("-")[0];
+    const voices = syn.getVoices();
+    const v = voices.find(v => v.lang.replace("_", "-").toLowerCase() === code.toLowerCase()) || voices.find(v => v.lang.toLowerCase().startsWith(pre));
+    if (voices.length && !v) toast("이 기기에는 이 언어 목소리가 없어요. 읽는 법을 보고 따라 해 보세요.");
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = code; if (v) u.voice = v; u.rate = .85;
+    syn.cancel(); syn.speak(u);
+  } catch (e) {}
+}
+let actx;
+function beep(ok) {
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    const notes = ok ? [660, 880] : [220, 180];
+    notes.forEach((f, i) => {
+      const o = actx.createOscillator(), g = actx.createGain();
+      o.frequency.value = f; o.type = ok ? "sine" : "square";
+      g.gain.setValueAtTime(.08, actx.currentTime + i * .1);
+      g.gain.exponentialRampToValueAtTime(.001, actx.currentTime + i * .1 + .18);
+      o.connect(g).connect(actx.destination); o.start(actx.currentTime + i * .1); o.stop(actx.currentTime + i * .1 + .2);
+    });
+  } catch (e) {}
+}
+
+// 홈
+let filter = "ready";
+function renderHome() {
+  stats();
+  $("#notice").innerHTML = `목록에 있는 <b>${ALL_NAMES.length}개 언어</b> 중 <b>${READY.length}개</b>를 지금 배울 수 있어요. 나머지는 단어를 정확히 확인한 다음에 열어요.`;
+  $("#fReady").textContent = `지금 배우기 ${READY.length}`;
+  $("#fAll").textContent = `전체 ${ALL_NAMES.length}`;
+  $("#fReady").setAttribute("aria-pressed", filter === "ready");
+  $("#fAll").setAttribute("aria-pressed", filter === "all");
+  const c = $("#cont");
+  if (S.recent && L[S.recent]) {
+    const d = S.done[S.recent] || 0;
+    const next = Math.min(d, LESSONS.length - 1);
+    c.innerHTML = `<button class="continue" id="contBtn"><div><span class="big">${esc(S.recent)} 이어서 하기</span><small>${d >= LESSONS.length ? "모든 단원 완료 · 다시 복습해요" : `${next + 1}단원 · ${LESSONS[next].t}`}</small></div><span class="go">→</span></button>`;
+    $("#contBtn").onclick = () => openCourse(S.recent);
+  } else c.innerHTML = "";
+  const q = $("#search").value.trim();
+  let list = (filter === "ready" ? READY : ALL_NAMES).filter(n => !q || n.includes(q));
+  const g = $("#grid");
+  if (!list.length) { g.innerHTML = `<p class="empty">"${esc(q)}"에 맞는 언어가 없어요. ${filter === "ready" ? "‘전체’에서 찾아보세요." : ""}</p>`; return; }
+  g.innerHTML = list.map(n => {
+    if (!L[n]) return `<button class="lang soon" data-n="${esc(n)}"><span class="nm">${esc(n)}</span><span class="hi">준비 중</span></button>`;
+    const d = S.done[n] || 0;
+    return `<button class="lang" data-n="${esc(n)}"><span class="nm">${esc(n)}</span><span class="hi" dir="auto">${esc(words(n)[0].w)}</span><span class="bar"><i style="width:${d / LESSONS.length * 100}%"></i></span></button>`;
+  }).join("");
+}
+$("#grid").addEventListener("click", e => {
+  const b = e.target.closest(".lang"); if (!b) return;
+  const n = b.dataset.n;
+  if (!L[n]) { toast(`${n}는 아직 준비 중이에요. 틀린 단어를 가르치지 않으려고 확인된 언어부터 열고 있어요.`); return; }
+  openCourse(n);
+});
+$("#search").addEventListener("input", renderHome);
+$("#fReady").onclick = () => { filter = "ready"; renderHome(); };
+$("#fAll").onclick = () => { filter = "all"; renderHome(); };
+
+// 코스
+let cur = null;
+function openCourse(n) {
+  cur = n; S.recent = n; save();
+  const d = S.done[n] || 0;
+  $("#cName").textContent = n;
+  $("#cInfo").textContent = `${LESSONS.length}단원 중 ${Math.min(d, LESSONS.length)}단원 완료 · 단어 ${KO.length}개`;
+  const off = [0, 64, 0, -64, 0];
+  $("#path").innerHTML = LESSONS.map((l, i) => {
+    const st = i < d ? "done" : i === d ? "current" : "locked";
+    return `<div class="node ${st}" style="transform:translateX(${off[i]}px)"><button data-i="${i}" aria-label="${i + 1}단원 ${l.t}">${i < d ? "✓" : i + 1}</button><span class="lbl">${l.t}<small>${l.d}</small></span></div>`;
+  }).join("");
+  const ws = words(n), code = L[n][0];
+  $("#wlist").innerHTML = ws.map((w, i) => `<div class="wrow"><span class="ko">${KO[i]}</span><span class="fw" dir="auto">${esc(w.w)}${w.r ? `<small>${esc(w.r)}</small>` : ""}</span><button class="spk" data-say="${i}" aria-label="${KO[i]} 듣기">${SPK}</button></div>`).join("");
+  $("#wlist").onclick = e => { const b = e.target.closest("[data-say]"); if (b) speak(ws[+b.dataset.say].w, code); };
+  show("course");
+}
+$("#path").addEventListener("click", e => {
+  const b = e.target.closest("button[data-i]"); if (!b) return;
+  const i = +b.dataset.i, d = S.done[cur] || 0;
+  if (i > d) { toast(`먼저 ${d + 1}단원을 끝내야 열려요.`); return; }
+  startLesson(i);
+});
+$("#toHome").onclick = () => { renderHome(); show("home"); };
+
+// 레슨
+let LS = null;
+function startLesson(i) {
+  const ws = LESSONS[i].w;
+  let qs = [];
+  ws.forEach(k => { qs.push({ type: "pick", k }); qs.push({ type: "rev", k }); });
+  qs = shuffle(qs);
+  if (i === LESSONS.length - 1) qs = qs.slice(0, 10);
+  // 짝 맞추기 4쌍: 이번 단원 단어 + 부족하면 다른 단어
+  const extra = shuffle(KO.map((_, k) => k).filter(k => !ws.includes(k)));
+  const mk = shuffle(ws).slice(0, 4).concat(extra).slice(0, 4);
+  qs.splice(Math.min(3, qs.length), 0, { type: "match", keys: mk });
+  LS = { i, qs, pos: 0, hearts: 5, first: qs.length, right: 0, wrong: 0, sel: null, state: "ask" };
+  show("lesson");
+  renderQ();
+}
+function optsFor(k) { return shuffle([k, ...shuffle(KO.map((_, j) => j).filter(j => j !== k)).slice(0, 3)]); }
+function renderQ() {
+  const q = LS.qs[LS.pos], ws = words(cur), code = L[cur][0];
+  $("#prog").style.width = (LS.pos / LS.qs.length * 100) + "%";
+  $("#hearts").textContent = LS.hearts;
+  LS.sel = null; LS.state = "ask";
+  const foot = $("#foot"); foot.className = "foot"; $("#fb").hidden = true;
+  const act = $("#action"); act.textContent = "확인"; act.disabled = true;
+  const box = $("#qbox");
+  if (q.type === "pick") {
+    q.opts = q.opts || optsFor(q.k);
+    box.innerHTML = `<h3 class="qtitle">이 말은 무슨 뜻일까요?</h3>
+      <div class="prompt"><button class="spk" id="say" aria-label="듣기">${SPK}</button><div class="word" dir="auto">${esc(ws[q.k].w)}${ws[q.k].r ? `<small>${esc(ws[q.k].r)}</small>` : ""}</div></div>
+      <div class="opts">${q.opts.map((o, n) => `<button class="opt" data-o="${o}"><span class="k">${n + 1}</span>${KO[o]}</button>`).join("")}</div>`;
+    $("#say").onclick = () => speak(ws[q.k].w, code);
+    speak(ws[q.k].w, code);
+  } else if (q.type === "rev") {
+    q.opts = q.opts || optsFor(q.k);
+    box.innerHTML = `<h3 class="qtitle">${cur}로 고르세요</h3>
+      <div class="prompt"><div class="word">${KO[q.k]}</div></div>
+      <div class="opts">${q.opts.map((o, n) => `<button class="opt" data-o="${o}" dir="auto"><span class="k">${n + 1}</span>${esc(ws[o].w)}${ws[o].r ? `<small>${esc(ws[o].r)}</small>` : ""}</button>`).join("")}</div>`;
+  } else {
+    const left = shuffle(q.keys), right = shuffle(q.keys);
+    box.innerHTML = `<h3 class="qtitle">짝을 맞춰 보세요</h3>
+      <div class="match"><div class="col">${left.map(k => `<button class="opt" data-side="l" data-k="${k}">${KO[k]}</button>`).join("")}</div>
+      <div class="col">${right.map(k => `<button class="opt" data-side="r" data-k="${k}" dir="auto">${esc(ws[k].w)}${ws[k].r ? `<small>${esc(ws[k].r)}</small>` : ""}</button>`).join("")}</div></div>`;
+    act.textContent = "짝을 모두 맞추면 넘어가요";
+    LS.pick = { l: null, r: null, left: q.keys.length, miss: false };
+  }
+}
+$("#qbox").addEventListener("click", e => {
+  const b = e.target.closest(".opt"); if (!b || LS.state !== "ask") return;
+  const q = LS.qs[LS.pos];
+  if (q.type === "match") return matchTap(b);
+  document.querySelectorAll("#qbox .opt").forEach(x => x.setAttribute("aria-pressed", x === b));
+  LS.sel = +b.dataset.o;
+  $("#action").disabled = false;
+  if (q.type === "rev") speak(words(cur)[LS.sel].w, L[cur][0]);
+});
+function matchTap(b) {
+  const side = b.dataset.side, k = +b.dataset.k, P = LS.pick;
+  if (side === "r") speak(words(cur)[k].w, L[cur][0]);
+  document.querySelectorAll(`#qbox .opt[data-side="${side}"]`).forEach(x => x.setAttribute("aria-pressed", x === b));
+  P[side] = b;
+  if (P.l && P.r) {
+    const a = P.l, c = P.r;
+    if (a.dataset.k === c.dataset.k) {
+      [a, c].forEach(x => { x.classList.add("right"); x.setAttribute("aria-pressed", false); setTimeout(() => { x.classList.remove("right"); x.classList.add("gone"); }, 250); });
+      P.left--; beep(true);
+      if (P.left === 0) { if (!P.miss) LS.right++; feedback(true, ""); }
+    } else {
+      P.miss = true; beep(false);
+      [a, c].forEach(x => { x.classList.add("wrong", "shake"); x.setAttribute("aria-pressed", false); setTimeout(() => x.classList.remove("wrong", "shake"), 400); });
+    }
+    P.l = P.r = null;
+  }
+}
+function check() {
+  const q = LS.qs[LS.pos], ws = words(cur);
+  const ok = LS.sel === q.k;
+  document.querySelectorAll("#qbox .opt").forEach(x => {
+    const o = +x.dataset.o;
+    if (o === q.k) x.classList.add("right"); else if (o === LS.sel) x.classList.add("wrong");
+  });
+  if (ok) { LS.right++; }
+  else {
+    LS.wrong++; LS.hearts--;
+    $("#hearts").textContent = LS.hearts;
+    LS.qs.push({ type: q.type, k: q.k }); // 틀린 문제는 끝에 한 번 더
+  }
+  beep(ok);
+  const ans = q.type === "pick" ? `${ws[q.k].w} = ${KO[q.k]}` : `${KO[q.k]} = ${ws[q.k].w}${ws[q.k].r ? ` (${ws[q.k].r})` : ""}`;
+  feedback(ok, ans);
+}
+const PRAISE = ["잘했어요!", "정답이에요!", "멋져요!", "완벽해요!"];
+function feedback(ok, ans) {
+  LS.state = "fb";
+  const foot = $("#foot"), fb = $("#fb");
+  foot.className = "foot " + (ok ? "ok" : "no");
+  fb.hidden = false;
+  fb.innerHTML = ok ? `${PRAISE[Math.floor(Math.random() * PRAISE.length)]}${ans ? `<small dir="auto">${esc(ans)}</small>` : ""}` : `아쉬워요<small dir="auto">정답: ${esc(ans)}</small>`;
+  const act = $("#action"); act.disabled = false; act.textContent = "계속"; act.focus();
+}
+function next() {
+  if (LS.hearts <= 0) return finish(false);
+  LS.pos++;
+  if (LS.pos >= LS.qs.length) return finish(true);
+  renderQ();
+}
+$("#action").onclick = () => { if (LS.state === "ask") { if (LS.sel !== null) check(); } else next(); };
+$("#quit").onclick = () => openCourse(cur);
+document.addEventListener("keydown", e => {
+  if ($("#lesson").hidden || e.target.tagName === "INPUT") return;
+  if (e.key === "Enter") { e.preventDefault(); $("#action").click(); return; }
+  const n = parseInt(e.key, 10);
+  if (n >= 1 && n <= 4 && LS.state === "ask") { const b = document.querySelectorAll("#qbox .opts .opt")[n - 1]; if (b) b.click(); }
+});
+
+function finish(ok) {
+  $("#prog").style.width = "100%";
+  const r = $("#rbox");
+  if (!ok) {
+    r.innerHTML = `<div class="medal fail">♡</div><h2>하트를 다 썼어요</h2><p>괜찮아요. 단어장을 한 번 보고 다시 해 봐요.</p>
+      <button class="btn" id="retry">다시 하기</button><button class="btn ghost" id="toC">단원 목록으로</button>`;
+  } else {
+    const total = LS.right + LS.wrong;
+    const acc = total ? Math.round(LS.right / total * 100) : 100;
+    const gain = 10 + (LS.wrong === 0 ? 5 : 0);
+    S.xp += gain;
+    S.done[cur] = Math.max(S.done[cur] || 0, LS.i + 1);
+    const today = dayStr(new Date()), yest = dayStr(new Date(Date.now() - 864e5));
+    if (S.last !== today) { S.streak = S.last === yest ? S.streak + 1 : 1; S.last = today; }
+    save(); stats();
+    const all = S.done[cur] >= LESSONS.length;
+    r.innerHTML = `<div class="medal">${LS.i + 1}</div><h2>${LESSONS[LS.i].t} 단원 완료!</h2>
+      <p>${all ? `${cur} 기초 단어 ${KO.length}개를 모두 배웠어요.` : `다음은 ${LESSONS[Math.min(LS.i + 1, LESSONS.length - 1)].t} 단원이에요.`}</p>
+      <div class="tiles"><div class="tile"><b>+${gain}</b><span>경험치</span></div><div class="tile"><b>${acc}%</b><span>정확도</span></div><div class="tile"><b>${S.streak}일</b><span>연속 학습</span></div></div>
+      <button class="btn" id="toC">계속하기</button>`;
+  }
+  show("result");
+  const toC = $("#toC"); if (toC) toC.onclick = () => openCourse(cur);
+  const re = $("#retry"); if (re) re.onclick = () => startLesson(LS.i);
+}
+
+try { speechSynthesis.getVoices(); } catch (e) {}
+renderHome();
+show("home");
+</script>
+</body>
+</html>
