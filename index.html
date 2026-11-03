@@ -576,7 +576,13 @@ const lessonsFor = n => EXT[n] ? BASE_LESSONS.concat(EXT_LESSONS) : BASE_LESSONS
 const $ = s => document.querySelector(s);
 const READY = ALL_NAMES.filter(n => L[n]);
 const words = n => L[n].slice(1).concat(EXT[n] || []).map(s => { const [w, r] = s.split("|"); return { w, r: r || "" }; });
-const allIdx = () => [...Array(words(cur).length).keys()];
+// 보기에는 지금 단원까지 나온 단어만 써요
+let lessonIdx = null;
+const allIdx = () => {
+  const n = words(cur).length;
+  const lim = lessonIdx === null ? n : Math.max(...LESSONS.slice(0, lessonIdx + 1).flatMap(l => l.w)) + 1;
+  return [...Array(Math.min(n, Math.max(lim, 10))).keys()];
+};
 const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const SPK = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
@@ -787,6 +793,7 @@ function setMode() { const b = LS.mode === "blitz"; $("#heartStat").hidden = b; 
 // 번개 퀴즈: 60초 동안 많이 맞히기
 let blitzT = null;
 function startBlitz() {
+  lessonIdx = null;
   LS = { mode: "blitz", qs: [], pos: -1, hearts: 99, right: 0, wrong: 0, combo: 0, bonus: 0, sel: null, state: "ask", end: Date.now() + 60000 };
   show("lesson"); setMode(); setupArena(-1);
   clearInterval(blitzT); blitzT = setInterval(tick, 200);
@@ -966,6 +973,7 @@ $("#toHome").onclick = () => { renderHome(); show("home"); };
 // 레슨
 let LS = null;
 function startLesson(i) {
+  lessonIdx = i;
   let ws = LESSONS[i].w;
   if (LESSONS[i].review) ws = shuffle(ws).slice(0, 7);
   let qs = [];
