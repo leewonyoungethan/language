@@ -674,8 +674,10 @@ const MON = [
 ];
 const CROWN = ["....G.GG.G....", "....GGGGGG....", "....GRGGRG...."];
 function monster(i, mood) {
-  const t = i < 0 ? 4 : i % 5, m = MON[t], ey = m.ey;
-  const base = i < 0 ? "#E8B730" : ["#6CC46A", "#9B7BEA", "#E0864F", "#5BB0E0", "#E0506E"][i % 5];
+  // 보스는 모두 뿔 달린 모양, 보스마다 다른 색
+  const bossN = isBoss(i) ? LESSONS.slice(0, i).filter(l => l.boss).length : -1;
+  const t = i < 0 || bossN >= 0 ? 4 : i % 5, m = MON[t], ey = m.ey;
+  const base = i < 0 ? "#E8B730" : bossN >= 0 ? ["#E0506E", "#7A4FE0", "#1F9E8F", "#4A4560"][bossN % 4] : ["#6CC46A", "#9B7BEA", "#E0864F", "#5BB0E0", "#E0506E"][i % 5];
   const dk = "#" + [1, 3, 5].map(k => Math.round(parseInt(base.slice(k, k + 2), 16) * .7).toString(16).padStart(2, "0")).join("");
   const col = { K: "#1B1F33", C: base, D: dk, W: "#FFFFFF", H: "#FFF3D6", G: "#FFC21A", R: "#FF4D5E" };
   const g = m.map.map(r => [...r]);
