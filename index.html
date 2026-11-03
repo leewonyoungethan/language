@@ -664,22 +664,37 @@ function renderFun() {
 // 몬스터
 const foeName = i => i < 0 ? "시간 도깨비" : (LESSONS[i] || {}).foe || "몬스터";
 const isBoss = i => !!(LESSONS[i] && LESSONS[i].boss);
+// 픽셀 몬스터: 14칸 x 14줄. ey는 눈 줄
+const MON = [
+  { ey: 8, map: ["..............", "..............", "......KK......", ".....KCCK.....", "....KCCCCK....", "...KCCCCCCK...", "..KCCCCCCCCK..", ".KCCCCCCCCCCK.", ".KCCCCCCCCCCK.", "KCCCCCCCCCCCCK", "KCCCCCCCCCCCCK", "KDCCCCCCCCCCDK", "KDDDDDDDDDDDDK", ".KKKKKKKKKKKK."] },
+  { ey: 7, map: ["..............", "..K........K..", "..KK......KK..", "..KCK....KCK..", "..KCCKKKKCCK..", "K.KCCCCCCCCK.K", "KKKCCCCCCCCKKK", "KDKCCCCCCCCKDK", "KDDKCCCCCCKDDK", "KDDKCCCCCCKDDK", "KD.KCCCCCCK.DK", "K...KCCCCK...K", ".....KKKK.....", ".............."] },
+  { ey: 5, map: ["..............", "..KKKKKKKKKK..", ".KCCCCCCCCCCK.", ".KCDCCCCCCDCK.", ".KCCCCCCCCCCK.", "KKCCCCCCCCCCKK", "KDKCCCCCCCCKDK", "KDKCCCCCCCCKDK", "KDKCCCCCCCCKDK", "KKKCCCCCCCCKKK", "..KCCCCCCCCK..", "..KDDKKKKDDK..", "..KDDK..KDDK..", "..KKKK..KKKK.."] },
+  { ey: 6, map: ["..............", ".....KKKK.....", "...KKCCCCKK...", "..KCCCCCCCCK..", ".KCCCCCCCCCCK.", ".KCCCCCCCCCCK.", ".KCCCCCCCCCCK.", ".KCCCCCCCCCCK.", "KCCCCCCCCCCCCK", ".KCCCCCCCCCCK.", ".KCCCCCCCCCCK.", ".KCCDCCCCDCCK.", ".KCKKCKKCKKCK.", "..K..K..K..K.."] },
+  { ey: 6, map: ["..H........H..", "..HH......HH..", "...HKKKKKKH...", "...KCCCCCCK...", "..KCCCCCCCCK..", ".KCCCCCCCCCCK.", ".KCCCCCCCCCCK.", ".KCCCCCCCCCCK.", ".KCCCCCCCCCCK.", ".KCCCCCCCCCCK.", "..KCCCCCCCCK..", "...KCCCCCCK...", "...KDK..KDK...", "...KKK..KKK..."] }
+];
+const CROWN = ["....G.GG.G....", "....GGGGGG....", "....GRGGRG...."];
 function monster(i, mood) {
-  const c = i < 0 ? "#E8B730" : ["#6CC46A", "#9B7BEA", "#E0864F", "#5BB0E0", "#E0506E"][i % 5];
-  const ink = "#18213A", line = 'stroke="rgba(0,0,0,.28)" stroke-width="1.5"';
-  const wings = i % 5 === 1 ? `<path d="M10 30Q-2 20 2 40Q6 33 10 37Z M46 30Q58 20 54 40Q50 33 46 37Z" fill="${c}" ${line}/>` : "";
-  const horns = i % 5 >= 2 || i < 0 ? `<path d="M17 22 13 7 23 17Z M39 22 43 7 33 17Z" fill="#FFF7E0" ${line}/>` : "";
-  const crown = isBoss(i) ? '<path d="M18 15V3l5 6 5-8 5 8 5-6v12Z" fill="#FFD43B" stroke="#B8860B" stroke-width="1.4"/>' : "";
-  const body = i % 5 === 2
-    ? `<rect x="9" y="16" width="38" height="34" rx="8" fill="${c}" ${line}/><path d="M14 24h6M36 44h6M30 20v4" stroke="rgba(0,0,0,.2)" stroke-width="2"/>`
-    : `<path d="M8 50Q4 22 28 15Q52 22 48 50Q43 46 38 50Q33 46 28 50Q23 46 18 50Q13 46 8 50Z" fill="${c}" ${line}/>`;
-  const eyes = mood === "ko" ? `<path d="M18 26l6 6M24 26l-6 6M32 26l6 6M38 26l-6 6" stroke="${ink}" stroke-width="2.5" stroke-linecap="round"/>`
-    : mood === "hurt" ? `<path d="M18 27l6 2.5-6 2.5M38 27l-6 2.5 6 2.5" stroke="${ink}" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`
-    : `<circle cx="21" cy="30" r="4" fill="#fff"/><circle cx="35" cy="30" r="4" fill="#fff"/><circle cx="22" cy="30.5" r="2" fill="${ink}"/><circle cx="34" cy="30.5" r="2" fill="${ink}"/><path d="M16 23l9 4M40 23l-9 4" stroke="${ink}" stroke-width="2.5" stroke-linecap="round"/>`;
-  const mouth = mood === "ko" ? `<path d="M22 42q6-4 12 0" stroke="${ink}" stroke-width="2.5" fill="none" stroke-linecap="round"/>`
-    : mood === "hurt" ? `<ellipse cx="28" cy="41" rx="4" ry="3.2" fill="${ink}"/>`
-    : `<path d="M20 39l3 3 2.5-3 2.5 3 2.5-3 2.5 3 3-3" stroke="${ink}" stroke-width="2" fill="none" stroke-linejoin="round"/>`;
-  return `<svg viewBox="0 0 56 56" role="img" aria-label="${foeName(i)}">${wings}${horns}${body}${crown}${eyes}${mouth}</svg>`;
+  const t = i < 0 ? 4 : i % 5, m = MON[t], ey = m.ey;
+  const base = i < 0 ? "#E8B730" : ["#6CC46A", "#9B7BEA", "#E0864F", "#5BB0E0", "#E0506E"][i % 5];
+  const dk = "#" + [1, 3, 5].map(k => Math.round(parseInt(base.slice(k, k + 2), 16) * .7).toString(16).padStart(2, "0")).join("");
+  const col = { K: "#1B1F33", C: base, D: dk, W: "#FFFFFF", H: "#FFF3D6", G: "#FFC21A", R: "#FF4D5E" };
+  const g = m.map.map(r => [...r]);
+  const put = (x, y, c) => { if (g[y] && g[y][x] !== undefined) g[y][x] = c; };
+  if (mood === "ko") {
+    [[3, -1], [5, -1], [4, 0], [3, 1], [5, 1], [8, -1], [10, -1], [9, 0], [8, 1], [10, 1]].forEach(([x, d]) => put(x, ey + d, "K"));
+    [[6, 3], [7, 3], [5, 4], [8, 4]].forEach(([x, d]) => put(x, ey + d, "K"));
+  } else if (mood === "hurt") {
+    [[4, -1], [5, 0], [4, 1], [9, -1], [8, 0], [9, 1]].forEach(([x, d]) => put(x, ey + d, "K"));
+    [[6, 3], [7, 3], [6, 4], [7, 4]].forEach(([x, d]) => put(x, ey + d, "K"));
+  } else {
+    [[3, -2], [10, -2], [4, -1], [5, -1], [8, -1], [9, -1]].forEach(([x, d]) => put(x, ey + d, "K"));
+    [[4, 0, "W"], [5, 0, "W"], [8, 0, "W"], [9, 0, "W"], [4, 1, "W"], [5, 1, "K"], [8, 1, "K"], [9, 1, "W"]].forEach(([x, d, c]) => put(x, ey + d, c));
+    [[5, 3, "K"], [6, 3, "W"], [7, 3, "W"], [8, 3, "K"]].forEach(([x, d, c]) => put(x, ey + d, c));
+  }
+  if (isBoss(i)) CROWN.forEach((r, y) => [...r].forEach((c, x) => { if (c !== ".") g[y][x] = c; }));
+  let px = "";
+  g.forEach((row, y) => row.forEach((c, x) => { if (col[c]) px += `<rect x="${x * 4}" y="${y * 4}" width="4.05" height="4.05" fill="${col[c]}"/>`; }));
+  return `<svg viewBox="0 0 56 56" shape-rendering="crispEdges" role="img" aria-label="${foeName(i)}">${px}</svg>`;
 }
 function setupArena(i) {
   LS.foe = i; LS.hits = 0;
